@@ -1,15 +1,22 @@
 package org.weshley.fishtracker;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 public class TripsFragment extends AbstractFragment
 {
+   private TripListAdapter _adapter = null;
+
    public static String getLabel()
    {
       return MainActivity.getAppResources().getString(R.string.trips_label);
@@ -27,10 +34,35 @@ public class TripsFragment extends AbstractFragment
       recyclerView.setHasFixedSize(true);
       RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
       recyclerView.setLayoutManager(layoutManager);
-      TripListAdapter adapter = new TripListAdapter();
-      TripManager.instance().addTripListChangeListener(adapter);
-      recyclerView.setAdapter(adapter);
+      _adapter = new TripListAdapter();
+      TripManager.instance().addTripListChangeListener(_adapter);
+      recyclerView.setAdapter(_adapter);
+
+      // support context menus when long pressing on trips list
+      registerForContextMenu(recyclerView);
       return rootView;
+   }
+
+   @Override
+   public boolean onContextItemSelected(MenuItem item)
+   {
+      Trip trip = null;
+      if((null != _adapter) && (null != _adapter.getSelectedHolder()))
+         trip = _adapter.getSelectedHolder().getTrip();
+
+      switch (item.getItemId())
+      {
+        case R.id.trips_menu_resume_id:
+System.out.println("+++++++++++++++++++++++ RESUME " + trip.getLabel());
+// TODO:  prompt for confirmation if a trip is active, end active trip, resume selected trip
+            break;
+        case R.id.trips_menu_delete_id:
+System.out.println("+++++++++++++++++++++++ DELETE " + trip.getLabel());
+// TODO:  prompt for confirmation then delete the trip.  make sure ui updates.  clear current trip if it is the one being deleted
+            break;
+      }
+
+      return super.onContextItemSelected(item);
    }
 
 }

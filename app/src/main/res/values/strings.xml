@@ -11,4 +11,7 @@
     <string name="caught_fish">Caught Fish</string>
 
     <string name="trips_list_element_text"></string>
+
+    <string name="trips_menu_resume_label">Resume</string>
+    <string name="trips_menu_delete_label">Delete...</string>
 </resources>

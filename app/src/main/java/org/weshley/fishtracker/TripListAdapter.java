@@ -1,6 +1,8 @@
 package org.weshley.fishtracker;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -18,36 +20,67 @@ public class TripListAdapter
    implements TripListChangeListener
 {
    private List<Trip> _sortedTrips = null;
+   private ViewHolder _selectedHolder = null;
+
+   void setSelectedHolder(ViewHolder vh)
+   {
+      _selectedHolder = vh;
+   }
+
+   ViewHolder getSelectedHolder()
+   {
+      return _selectedHolder;
+   }
 
    // the view holders in the list just have a single text item
-   public class ViewHolder extends RecyclerView.ViewHolder
+   public class ViewHolder
+      extends RecyclerView.ViewHolder
+      implements View.OnCreateContextMenuListener
    {
+      private TripListAdapter _adapter = null;
       private TextView _textView = null;
       private Trip _trip = null;
 
-      public ViewHolder(View v)
+      public ViewHolder(View v, TripListAdapter adapter)
       {
          super(v);
          _textView = (TextView) v.findViewById(R.id.textView);
+         _adapter = adapter;
+         v.setOnCreateContextMenuListener(this);
       }
 
-      public TextView getTextView()
-      {
-         return _textView;
-      }
-
-      public Trip getTrip()
+      Trip getTrip()
       {
          return _trip;
       }
 
-      public void bind(Trip t)
+      void bind(Trip t)
       {
          _trip = t;
          _textView.setText(getTripLabel(t));
          ClickListener listener = new ClickListener(this);
          _textView.setOnClickListener(listener);
          _textView.setOnLongClickListener(listener);
+      }
+
+      void unbind()
+      {
+         _textView.setOnClickListener(null);
+         _textView.setOnLongClickListener(null);
+         _textView = null;
+         _trip = null;
+      }
+
+      void setSelectedHolder()
+      {
+         _adapter.setSelectedHolder(this);
+      }
+
+      @Override
+      public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+      {
+         menu.add(Menu.NONE, R.id.trips_menu_resume_id, Menu.NONE, R.string.trips_menu_resume_label);
+         menu.add(Menu.NONE, R.id.trips_menu_delete_id, Menu.NONE, R.string.trips_menu_delete_label);
       }
    }
 
@@ -63,9 +96,8 @@ public class TripListAdapter
 
       public boolean onLongClick(View v)
       {
-         // TODO - pop up menu to resume an ended trip or delete a trip (with confirm)
-         System.out.println("LONG TOUCH - " + _holder.getTrip().getLabel());
-         return true;
+         _holder.setSelectedHolder();
+         return false;
       }
 
       public void onClick(View v)
@@ -100,7 +132,7 @@ public class TripListAdapter
       // create a new view
       View v = LayoutInflater.from(parent.getContext()).inflate(
          R.layout.trips_list_item, parent, false);
-      ViewHolder vh = new ViewHolder(v);
+      ViewHolder vh = new ViewHolder(v, this);
       return vh;
    }
 
@@ -109,7 +141,14 @@ public class TripListAdapter
    public void onBindViewHolder(ViewHolder holder, int position)
    {
       Trip t = getSortedTrips().get(position);
-      holder.bind(t); //, position, tripLabel);
+      holder.bind(t);
+   }
+
+   @Override
+   public void onViewRecycled(ViewHolder holder)
+   {
+      holder.unbind();
+      super.onViewRecycled(holder);
    }
 
    // Return the size of your dataset (invoked by the layout manager)
