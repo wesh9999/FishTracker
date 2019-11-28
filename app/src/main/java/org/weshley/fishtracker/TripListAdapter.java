@@ -3,6 +3,7 @@ package org.weshley.fishtracker;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,83 +32,6 @@ public class TripListAdapter
    {
       return _selectedHolder;
    }
-
-   // the view holders in the list just have a single text item
-   public class ViewHolder
-      extends RecyclerView.ViewHolder
-      implements View.OnCreateContextMenuListener
-   {
-      private TripListAdapter _adapter = null;
-      private TextView _textView = null;
-      private Trip _trip = null;
-
-      public ViewHolder(View v, TripListAdapter adapter)
-      {
-         super(v);
-         _textView = (TextView) v.findViewById(R.id.textView);
-         _adapter = adapter;
-         v.setOnCreateContextMenuListener(this);
-      }
-
-      Trip getTrip()
-      {
-         return _trip;
-      }
-
-      void bind(Trip t)
-      {
-         _trip = t;
-         _textView.setText(getTripLabel(t));
-         ClickListener listener = new ClickListener(this);
-         _textView.setOnClickListener(listener);
-         _textView.setOnLongClickListener(listener);
-      }
-
-      void unbind()
-      {
-         _textView.setOnClickListener(null);
-         _textView.setOnLongClickListener(null);
-         _textView = null;
-         _trip = null;
-      }
-
-      void setSelectedHolder()
-      {
-         _adapter.setSelectedHolder(this);
-      }
-
-      @Override
-      public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-      {
-         menu.add(Menu.NONE, R.id.trips_menu_resume_id, Menu.NONE, R.string.trips_menu_resume_label);
-         menu.add(Menu.NONE, R.id.trips_menu_delete_id, Menu.NONE, R.string.trips_menu_delete_label);
-      }
-   }
-
-   public static class ClickListener
-      implements View.OnClickListener, View.OnLongClickListener
-   {
-      private ViewHolder _holder = null;
-
-      public ClickListener(ViewHolder holder)
-      {
-         _holder = holder;
-      }
-
-      public boolean onLongClick(View v)
-      {
-         _holder.setSelectedHolder();
-         return false;
-      }
-
-      public void onClick(View v)
-      {
-         // TODO - set a selectedTrip in the TripManager and update trip detail UI
-         UiManager.instance().showPage(TripDetailFragment.class);
-      }
-
-   }
-
 
    public TripListAdapter()
    {
@@ -144,26 +68,11 @@ public class TripListAdapter
       holder.bind(t);
    }
 
-   @Override
-   public void onViewRecycled(ViewHolder holder)
-   {
-      holder.unbind();
-      super.onViewRecycled(holder);
-   }
-
    // Return the size of your dataset (invoked by the layout manager)
    @Override
    public int getItemCount()
    {
       return getSortedTrips().size();
-   }
-
-   private String getTripLabel(Trip t)
-   {
-      String tripLabel = t.getLabel();
-      if(getTripManager().isCurrentTrip(t))
-         tripLabel = "----> " + tripLabel + " <----";
-      return tripLabel;
    }
 
    // Reverse sort the trips by start date
@@ -190,5 +99,94 @@ public class TripListAdapter
    {
       return TripManager.instance();
    }
+
+   // the view holders in the list just have a single text item
+   public class ViewHolder
+      extends RecyclerView.ViewHolder
+      implements View.OnCreateContextMenuListener
+   {
+      private TripListAdapter _adapter = null;
+      private TextView _textView = null;
+      private Trip _trip = null;
+
+      public ViewHolder(View v, TripListAdapter adapter)
+      {
+         super(v);
+         _textView = (TextView) v.findViewById(R.id.textView);
+         _adapter = adapter;
+         v.setOnCreateContextMenuListener(this);
+      }
+
+      Trip getTrip()
+      {
+         return _trip;
+      }
+
+      void bind(Trip t)
+      {
+         // TODO - not sure how this can happen, but it did during some debugging.
+         //  do we have some dangling references to unbound ViewHolders?
+         if(null == _textView)
+            return;
+
+         _trip = t;
+         _textView.setText(getTripManager().getDisplayableTripLabel(t));
+         ClickListener listener = new ClickListener(this);
+         _textView.setOnClickListener(listener);
+         _textView.setOnLongClickListener(listener);
+      }
+
+      void unbind()
+      {
+         _textView.setOnClickListener(null);
+         _textView.setOnLongClickListener(null);
+         _textView = null;
+         _adapter = null;
+         _trip = null;
+      }
+
+      void setSelectedHolder()
+      {
+         _adapter.setSelectedHolder(this);
+      }
+
+      @Override
+      public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+      {
+         MenuItem mi = menu.add(
+            Menu.NONE, R.id.trips_menu_resume_id, Menu.NONE,
+            R.string.trips_menu_resume_label);
+         mi.setEnabled(_trip != TripManager.instance().getActiveTrip());
+         menu.add(
+            Menu.NONE, R.id.trips_menu_delete_id, Menu.NONE,
+            R.string.trips_menu_delete_label);
+      }
+   }
+
+   public static class ClickListener
+      implements View.OnClickListener, View.OnLongClickListener
+   {
+      private ViewHolder _holder = null;
+
+      public ClickListener(ViewHolder holder)
+      {
+         _holder = holder;
+      }
+
+      public boolean onLongClick(View v)
+      {
+         _holder.setSelectedHolder();
+         return false;
+      }
+
+      public void onClick(View v)
+      {
+         // TODO - set a selectedTrip in the TripManager and update trip detail UI
+         TripManager.instance().setSelectedTrip(_holder.getTrip());
+         UiManager.instance().showPage(TripDetailFragment.class);
+      }
+
+   }
+
 
 }

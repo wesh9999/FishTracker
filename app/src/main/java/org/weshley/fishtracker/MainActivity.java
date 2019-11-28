@@ -1,17 +1,20 @@
 package org.weshley.fishtracker;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity
+   extends FragmentActivity
+   implements TripListChangeListener
 {
    private static Resources _resources = null;
    private static Context _context = null;
@@ -24,6 +27,11 @@ public class MainActivity extends FragmentActivity
    protected static Context getContext()
    {
       return _context;
+   }
+
+   public void tripListChanged(TripListChangeEvent ev)
+   {
+      updateButtonState();
    }
 
    @Override
@@ -45,6 +53,10 @@ public class MainActivity extends FragmentActivity
 
    private void registerEventHandlers()
    {
+      // want to know when trips have changed so we can update the
+      // EndTrip/NewTrip/CaughtFish buttons if necessary
+      TripManager.instance().addTripListChangeListener(this);
+
       getTripButton().setOnClickListener(new View.OnClickListener()
       {
          @Override
@@ -63,16 +75,15 @@ public class MainActivity extends FragmentActivity
 
    private void handleTripButtonClick(Button b)
    {
-      if(getTripManager().hasCurrentTrip())
-         endTrip();
+      if(getTripManager().hasActiveTrip())
+         confirmAndEndTrip();
       else
          startTrip();
-      updateButtonState();
    }
 
    private void updateButtonState()
    {
-      if(getTripManager().hasCurrentTrip())
+      if(getTripManager().hasActiveTrip())
       {
         getTripButton().setText(getText(R.string.end_trip));
         getFishButton().setEnabled(true);
@@ -87,12 +98,31 @@ public class MainActivity extends FragmentActivity
    private void startTrip()
    {
       getTripManager().startTrip();
+      updateButtonState();
       UiManager.instance().showPage(TripDetailFragment.class);
+   }
+
+   private void confirmAndEndTrip()
+   {
+      new AlertDialog.Builder(getContext())
+         .setTitle("End Current Trip?")
+         .setMessage("End the current trip?")
+         .setIcon(android.R.drawable.ic_dialog_alert)
+         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+            {
+               public void onClick(DialogInterface dialog, int whichButton)
+               {
+                  endTrip();
+               }
+            })
+         .setNegativeButton(android.R.string.no, null).show();
+
    }
 
    private void endTrip()
    {
       getTripManager().endTrip();
+      updateButtonState();
    }
 
    private TripManager getTripManager()

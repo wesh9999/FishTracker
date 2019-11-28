@@ -1,7 +1,5 @@
 package org.weshley.fishtracker;
 
-import android.util.Log;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,9 +16,15 @@ public class TripManager
    private static final boolean INIT_TEST_DATA = true;
    private static TripManager _instance = null;
    private Set<String> _allLocations = new TreeSet<String>();
-   private Trip _currentTrip = null;
+   private Trip _activeTrip = null;
+      // _activeTrip is the trip that is open that caught fish, tracks, and other events
+      // are attached to
+   private Trip _selectedTrip = null;
+      // _selectedTrip is the trip current being displayed in the Trip Detail tab.  often
+      // the _activeTrip, but not always
    private List<Trip> _trips = new ArrayList<Trip>();
    private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<TripListChangeListener>();
+   private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<SelectedTripChangeListener>();
 
 
    private static void initTestData()
@@ -32,9 +36,10 @@ public class TripManager
          { "2019/06/02 12:00 AM", "2019/06/02 2:00 PM", "Lake Hartwell" }
       };
 
-      DateFormat fmt = Config.getDateFormat();
+      DateFormat fmt = Config.getDateTimeFormat();
       Calendar cal = Calendar.getInstance();
       int batches = 1;
+      Trip activeTrip = null;
       for(int b = 0; b < batches; ++b)
       {
          for(Object[] props : data)
@@ -54,8 +59,8 @@ public class TripManager
                t.setEnd(cal.getTime());
                t.setLocation((String) props[2]);
                _instance._trips.add(t);
-               if(null == _instance._currentTrip)
-                  _instance._currentTrip = t;
+               if(null == activeTrip)
+                  activeTrip = t;
             }
             catch(Exception ex)
             {
@@ -63,6 +68,7 @@ public class TripManager
                ex.printStackTrace();
             }
          }
+         _instance.setActiveTrip(activeTrip);
       }
    }
 
@@ -83,24 +89,54 @@ public class TripManager
       _tripListChangeListeners.add(listener);
    }
 
+   public void addSelectedTripChangeListener(SelectedTripChangeListener listener)
+   {
+      _selectedTripChangeListeners.add(listener);
+   }
+
    public List<Trip> getTrips()
    {
       return _trips;
    }
 
-   public boolean hasCurrentTrip()
+   public String getDisplayableTripLabel(Trip t)
    {
-      return null != _currentTrip;
+      if(null == t)
+         return "NO TRIP!!!!";
+
+      // TODO - Find a better way to mark the active trip other than the “** ” tag??
+      String tripLabel = t.getLabel();
+      if(isActiveTrip(t))
+         tripLabel = "**  " + tripLabel;
+      return tripLabel;
    }
 
-   public Trip getCurrentTrip()
+   public boolean hasActiveTrip()
    {
-      return _currentTrip;
+      return null != _activeTrip;
    }
 
-   public boolean isCurrentTrip(Trip t)
+   public Trip getActiveTrip()
    {
-      return _currentTrip == t;
+      return _activeTrip;
+   }
+
+   public boolean isActiveTrip(Trip t)
+   {
+      return _activeTrip == t;
+   }
+
+   public Trip getSelectedTrip()
+   {
+      return _selectedTrip;
+   }
+
+   public void setSelectedTrip(Trip t)
+   {
+      if(_selectedTrip == t)
+         return;
+      _selectedTrip = t;
+      fireSelectedTripChanged(_selectedTrip);
    }
 
    public Trip getMostRecentTrip()
@@ -113,29 +149,70 @@ public class TripManager
          return _trips.get(_trips.size() - 1);
    }
 
+   public void setActiveTrip(Trip t)
+   {
+      if(_activeTrip == t)
+         return;
+      if(!_trips.contains(t))
+         _trips.add(t);
+      endTrip();
+      _activeTrip = t;
+      _selectedTrip = _activeTrip;
+      fireTripListChanged(_activeTrip);
+      fireSelectedTripChanged(_selectedTrip);
+   }
+
    public Trip startTrip()
    {
       endTrip();
-      _currentTrip = new Trip();
-      _trips.add(_currentTrip);
-      fireTripListChanged(_currentTrip);
-      return _currentTrip;
+      _activeTrip = new Trip();
+      _trips.add(_activeTrip);
+      _selectedTrip = _activeTrip;
+      fireTripListChanged(_activeTrip);
+      fireSelectedTripChanged(_selectedTrip);
+      return _activeTrip;
    }
 
    public void endTrip()
    {
-      if(null != _currentTrip)
-         _currentTrip.finalize();
-      _currentTrip = null;
-      fireTripListChanged(_currentTrip);
+      if(null != _activeTrip)
+         _activeTrip.finalize();
+      Trip oldTrip = _activeTrip;
+      _activeTrip = null;
+      fireTripListChanged(oldTrip);
+   }
+
+   public void resumeTrip(Trip oldTrip)
+   {
+      if(oldTrip == _activeTrip)
+         return;
+
+      if(null != _activeTrip)
+         _activeTrip.finalize();
+      fireTripListChanged(_activeTrip);
+
+      // should never happen, but just in case....
+      if(!_trips.contains(oldTrip))
+         _trips.add(oldTrip);
+      _activeTrip = oldTrip;
+      fireTripListChanged(_activeTrip);
+
+      _selectedTrip = _activeTrip;
+      fireSelectedTripChanged(_selectedTrip);
    }
 
    public void deleteTrip(Trip t)
    {
       _trips.remove(t);
-      if(t == _currentTrip)
-         _currentTrip = null;
+      if(t == _activeTrip)
+         _activeTrip = null;
       fireTripListChanged(t);
+
+      if(_selectedTrip == t)
+      {
+         _selectedTrip = _activeTrip;
+         fireSelectedTripChanged(_selectedTrip);
+      }
    }
 
    public void addLocation(String location)
@@ -166,6 +243,13 @@ public class TripManager
       TripListChangeEvent ev = new TripListChangeEvent(t);
       for(TripListChangeListener lsnr : _tripListChangeListeners)
          lsnr.tripListChanged(ev);
+   }
+
+   void fireSelectedTripChanged(Trip t)
+   {
+      SelectedTripChangeEvent ev = new SelectedTripChangeEvent(t);
+      for(SelectedTripChangeListener lsnr : _selectedTripChangeListeners)
+         lsnr.selectedTripChanged(ev);
    }
 
 }

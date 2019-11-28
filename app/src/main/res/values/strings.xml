@@ -12,6 +12,7 @@
 
     <string name="trips_list_element_text"></string>
 
-    <string name="trips_menu_resume_label">Resume</string>
+    <string name="trips_menu_resume_label">Resume...</string>
     <string name="trips_menu_delete_label">Delete...</string>
+    <string name="detail_start_label">Trip Start:</string>
 </resources>

@@ -7,8 +7,21 @@ import java.text.SimpleDateFormat;
 //       named configs, persist & load them, etc
 public class Config
 {
+   private static final String DATE_FORMAT = "yyyy/MM/dd";
+   private static final String TIME_FORMAT = "h:mm a";
+
+   public static DateFormat getDateTimeFormat()
+   {
+      return new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT);
+   }
+
    public static DateFormat getDateFormat()
    {
-      return new SimpleDateFormat("yyyy/MM/dd h:mm a");
+      return new SimpleDateFormat(DATE_FORMAT);
+   }
+
+   public static DateFormat getTimeFormat()
+   {
+      return new SimpleDateFormat(TIME_FORMAT);
    }
 }

@@ -193,7 +193,7 @@ public class Fish
       // TODO: figure out how to get temp from phone sensor
 
       // if no temp from sensor, try to use trip air temp
-      Trip t = TripManager.instance().getCurrentTrip();
+      Trip t = TripManager.instance().getActiveTrip();
       if(null != t)
          return t.getAirTemp();
       return -1;
@@ -201,7 +201,7 @@ public class Fish
 
    private int getCurrentTripWaterTemp()
    {
-      Trip t = TripManager.instance().getCurrentTrip();
+      Trip t = TripManager.instance().getActiveTrip();
       if(null != t)
          return t.getWaterTemp();
       return -1;
@@ -209,7 +209,7 @@ public class Fish
 
    private Fish getLastCaughtFish()
    {
-      Trip t = TripManager.instance().getCurrentTrip();
+      Trip t = TripManager.instance().getActiveTrip();
       if(null == t)
          return null;
       return t.getMostRecentCaughtFish();

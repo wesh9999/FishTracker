@@ -62,7 +62,7 @@ public class Trip
       if(null == _start)
          sb.append("<unknown time>");
       else
-         sb.append(Config.getDateFormat().format(_start));
+         sb.append(Config.getDateTimeFormat().format(_start));
       sb.append(" @ ");
       if(StringUtils.isEmpty(_location))
          sb.append("<unknown location>");

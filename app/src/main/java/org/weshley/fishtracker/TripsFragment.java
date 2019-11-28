@@ -1,13 +1,12 @@
 package org.weshley.fishtracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,16 +52,54 @@ public class TripsFragment extends AbstractFragment
       switch (item.getItemId())
       {
         case R.id.trips_menu_resume_id:
-System.out.println("+++++++++++++++++++++++ RESUME " + trip.getLabel());
-// TODO:  prompt for confirmation if a trip is active, end active trip, resume selected trip
+            resumeOldTrip(trip);
             break;
         case R.id.trips_menu_delete_id:
-System.out.println("+++++++++++++++++++++++ DELETE " + trip.getLabel());
-// TODO:  prompt for confirmation then delete the trip.  make sure ui updates.  clear current trip if it is the one being deleted
+            deleteTrip(trip);
             break;
       }
 
       return super.onContextItemSelected(item);
+   }
+
+   private void deleteTrip(final Trip trip)
+   {
+      new AlertDialog.Builder(getContext())
+         .setTitle("Delete Trip?")
+         .setMessage("Permanently destroy all data associated with trip '" + trip.getLabel() + "'?")
+         .setIcon(android.R.drawable.ic_dialog_alert)
+         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+            {
+               public void onClick(DialogInterface dialog, int whichButton)
+               {
+                  getTripManager().deleteTrip(trip);
+               }
+            })
+         .setNegativeButton(android.R.string.no, null).show();
+   }
+
+   private void resumeOldTrip(final Trip trip)
+   {
+      String msgPrefix = "Resume";
+      if(getTripManager().hasActiveTrip())
+         msgPrefix = "End current trip and resume";
+      new AlertDialog.Builder(getContext())
+         .setTitle("Resume Old Trip?")
+         .setMessage(msgPrefix + " old trip '" + trip.getLabel() + "'?")
+         .setIcon(android.R.drawable.ic_dialog_alert)
+         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+            {
+               public void onClick(DialogInterface dialog, int whichButton)
+               {
+                  getTripManager().resumeTrip(trip);
+               }
+            })
+         .setNegativeButton(android.R.string.no, null).show();
+   }
+
+   private TripManager getTripManager()
+   {
+      return TripManager.instance();
    }
 
 }
