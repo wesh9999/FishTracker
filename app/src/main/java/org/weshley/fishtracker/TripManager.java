@@ -25,15 +25,17 @@ public class TripManager
    private List<Trip> _trips = new ArrayList<Trip>();
    private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<TripListChangeListener>();
    private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<SelectedTripChangeListener>();
+   private Set<TripLocationsChangeListener> _tripLocationsChangeListeners = new HashSet<TripLocationsChangeListener>();
 
 
    private static void initTestData()
    {
       Object[][] data =
       {
-         { "2018/05/09 9:00 AM", "2018/05/09 10:00 AM", "Lake Hartwell" },
-         { "2019/07/09 2:00 PM", "2019/07/09 4:00 PM", "Lake Hartwell" },
-         { "2019/06/02 12:00 AM", "2019/06/02 2:00 PM", "Lake Hartwell" }
+         // trip-start, trip-end, location, lake level, air-temp, water-temp, wind-speed, wind-dir, wind-strength, precip, notes
+         { "2018/05/09 9:00 AM", "2018/05/09 10:00 AM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" },
+         { "2019/07/09 2:00 PM", "2019/07/09 4:00 PM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" },
+         { "2019/06/02 12:00 AM", "2019/06/02 2:00 PM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" }
       };
 
       DateFormat fmt = Config.getDateTimeFormat();
@@ -58,6 +60,14 @@ public class TripManager
                   cal.add(Calendar.DAY_OF_MONTH, b);
                t.setEnd(cal.getTime());
                t.setLocation((String) props[2]);
+               t.setLakeLevel((int) props[3]);
+               t.setAirTemp(new Temperature((int) props[4]));
+               t.setWaterTemp(new Temperature((int) props[5]));
+               t.setWindSpeed((int) props[6]);
+               t.setWindDirection(Trip.Direction.valueOf((String) props[7]));
+               t.setWindStrength(Trip.Strength.valueOf((String) props[8]));
+               t.setPrecipitation(Trip.Precipitation.valueOf((String) props[9]));
+               t.setNotes((String) props[10]);
                _instance._trips.add(t);
                if(null == activeTrip)
                   activeTrip = t;
@@ -92,6 +102,11 @@ public class TripManager
    public void addSelectedTripChangeListener(SelectedTripChangeListener listener)
    {
       _selectedTripChangeListeners.add(listener);
+   }
+
+   public void addTripLocationsChangeListener(TripLocationsChangeListener listener)
+   {
+      _tripLocationsChangeListeners.add(listener);
    }
 
    public List<Trip> getTrips()
@@ -217,13 +232,31 @@ public class TripManager
 
    public void addLocation(String location)
    {
-      if((null != location) && !location.isEmpty())
+      if((null != location) && !location.isEmpty() && !_allLocations.contains(location))
+      {
          _allLocations.add(location);
+         fireTripLocationsChanged(location);
+      }
    }
 
    public Set<String> getAllLocations()
    {
       return _allLocations;
+   }
+
+   public Trip.Direction[] getAllWindDirections()
+   {
+      return Trip.Direction.values();
+   }
+
+   public Trip.Strength[] getAllWindStrengths()
+   {
+      return Trip.Strength.values();
+   }
+
+   public Trip.Precipitation[] getAllPrecipitations()
+   {
+      return Trip.Precipitation.values();
    }
 
    private TripManager()
@@ -233,7 +266,6 @@ public class TripManager
    private void initAllLocations()
    {
       // TODO: this should be reading from some persistent storage, but for now....
-      _allLocations.add("-- Other --");
       _allLocations.add("Lake Hartwell");
       _allLocations.add("Oliver Lake");
    }
@@ -250,6 +282,14 @@ public class TripManager
       SelectedTripChangeEvent ev = new SelectedTripChangeEvent(t);
       for(SelectedTripChangeListener lsnr : _selectedTripChangeListeners)
          lsnr.selectedTripChanged(ev);
+   }
+
+   void fireTripLocationsChanged(String location)
+   {
+      TripLocationsChangeEvent ev = new TripLocationsChangeEvent(location);
+      for(TripLocationsChangeListener lsnr : _tripLocationsChangeListeners)
+         lsnr.tripLocationsChanged(ev);
+
    }
 
 }

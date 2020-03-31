@@ -9,11 +9,11 @@ import java.util.TreeMap;
 public class Trip
 {
    public enum Direction
-      {N, NE, E, SE, S, SW, W, NW}
+      {Variable, N, NE, E, SE, S, SW, W, NW}
    public enum Strength
-      {Unknown, Intermittent, Steady, Growing, Waning}
+      {Intermittent, Steady, Growing, Waning}
    public enum Precipitation
-      {Unknown, Clear, PartlyCloudy, MostlyCloudy, SolidClouds, LightRain, HeavyRain}
+      {Clear, PartlyCloudy, MostlyCloudy, SolidClouds, LightRain, HeavyRain}
 
    private Date _start = null;
    private Date _end = null;
@@ -22,14 +22,14 @@ public class Trip
    private List<LatLon> _path = null;
       // TODO: when _trackLocation is turned on, need to start a thread that periodically stores
       //       a new location in _path. stop when trip stops or when turned off
-   private int _lakeLevel = -1;
-   private int _airTemp = -1;
+   private Integer _lakeLevel = null;
+   private Temperature _airTemp = null;
    private boolean _trackingTemp = false;
-   private List<Integer> _tempProfile = null;
+   private List<Temperature> _tempProfile = null;
       // TODO: when _trackTemp is turned on, need to start a thread that periodically stores
       //       a new temp in _tempProfile.  stop when trip stops or when turned off.
-   private int _waterTemp = -1;
-   private int _windSpeed = -1;
+   private Temperature _waterTemp = null;
+   private Integer _windSpeed = null;
    private Direction _windDirection = null;
    private Strength _windStrength = null;
    private Precipitation _precip = null;
@@ -46,8 +46,8 @@ public class Trip
       initializeAirTempFromSensor();
       _windSpeed = 0;
       _windDirection = null;
-      _windStrength = Strength.Unknown;
-      _precip = Precipitation.Unknown;
+      _windStrength = null;
+      _precip = null;
       _notes = "";
       _audioNotes = new TreeMap<String,AudioNote>();
       _fishCaught = new ArrayList<Fish>();
@@ -185,10 +185,13 @@ public class Trip
 
    public void setLocation(String loc)
    {
-      _location = loc;
-      _cachedLabel = null;
-      getTripManager().addLocation(loc);
-      getTripManager().fireTripListChanged(this);
+      if(!loc.equals(_location))
+      {
+         _location = loc;
+         _cachedLabel = null;
+         getTripManager().addLocation(loc);
+         getTripManager().fireTripListChanged(this);
+      }
    }
 
    public String getLocation()
@@ -201,27 +204,27 @@ public class Trip
       _lakeLevel = lev;
    }
 
-   public int getLakeLevel()
+   public Integer getLakeLevel()
    {
       return _lakeLevel;
    }
 
-   public void setWaterTemp(int temp)
+   public void setWaterTemp(Temperature temp)
    {
       _waterTemp = temp;
    }
 
-   public int getWaterTemp()
+   public Temperature getWaterTemp()
    {
       return _waterTemp;
    }
 
-   public void setAirTemp(int temp)
+   public void setAirTemp(Temperature temp)
    {
       _airTemp = temp;
    }
 
-   public int getAirTemp()
+   public Temperature getAirTemp()
    {
       return _airTemp;
    }
@@ -305,7 +308,7 @@ public class Trip
       // TODO: start temp tracking thread()
       _trackingTemp = true;
       if(null == _tempProfile)
-         _tempProfile = new ArrayList<Integer>();
+         _tempProfile = new ArrayList<Temperature>();
    }
 
    private void stopTempTracking()

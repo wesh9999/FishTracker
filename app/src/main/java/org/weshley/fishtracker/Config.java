@@ -10,6 +10,8 @@ public class Config
    private static final String DATE_FORMAT = "yyyy/MM/dd";
    private static final String TIME_FORMAT = "h:mm a";
 
+   public static final String OTHER_LOCATION_LABEL = "-- Other --";
+
    public static DateFormat getDateTimeFormat()
    {
       return new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT);
@@ -24,4 +26,6 @@ public class Config
    {
       return new SimpleDateFormat(TIME_FORMAT);
    }
+
+   public static Temperature.Units getDefaultTempUnits() { return Temperature.Units.F; }
 }

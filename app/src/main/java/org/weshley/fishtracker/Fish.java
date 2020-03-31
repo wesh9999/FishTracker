@@ -29,8 +29,8 @@ public class Fish
    private String _species = null;
    private int _length = -1;
    private int _weight = -1;
-   private int _airTemp = -1;
-   private int _waterTemp = -1;
+   private Temperature _airTemp = null;
+   private Temperature _waterTemp = null;
    private int _waterDepth = -1;
    private String _cover = null;
    private Photo _picture = null;
@@ -105,22 +105,22 @@ public class Fish
       return _waterDepth;
    }
 
-   public void setAirTemp(int temp)
+   public void setAirTemp(Temperature temp)
    {
       _airTemp = temp;
    }
 
-   public int getAirTemp()
+   public Temperature getAirTemp()
    {
       return _airTemp;
    }
 
-   public void setWaterTemp(int temp)
+   public void setWaterTemp(Temperature temp)
    {
       _waterTemp = temp;
    }
 
-   public int getWaterTemp()
+   public Temperature getWaterTemp()
    {
       return _waterTemp;
    }
@@ -188,7 +188,7 @@ public class Fish
       }
    }
 
-   private int getAirTempFromSensor()
+   private Temperature getAirTempFromSensor()
    {
       // TODO: figure out how to get temp from phone sensor
 
@@ -196,15 +196,15 @@ public class Fish
       Trip t = TripManager.instance().getActiveTrip();
       if(null != t)
          return t.getAirTemp();
-      return -1;
+      return null;
    }
 
-   private int getCurrentTripWaterTemp()
+   private Temperature getCurrentTripWaterTemp()
    {
       Trip t = TripManager.instance().getActiveTrip();
       if(null != t)
          return t.getWaterTemp();
-      return -1;
+      return null;
    }
 
    private Fish getLastCaughtFish()

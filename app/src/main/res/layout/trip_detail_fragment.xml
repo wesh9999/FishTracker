@@ -2,8 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/detail_water_temp_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="F"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_water_temp_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detail_water_temp_entry"
+        app:layout_constraintTop_toTopOf="@+id/detail_water_temp_label" />
 
     <TextView
         android:id="@+id/trip_detail_title"
@@ -15,17 +31,17 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@android:color/holo_blue_light"
+        android:gravity="center_vertical|center_horizontal"
         android:text="@string/trip_detail_label"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
         android:textSize="30sp"
-        android:gravity="center_vertical|center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/trip_detail_start_label"
+        android:id="@+id/detail_start_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -44,28 +60,332 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:text="start-date"
         android:textColor="@android:color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/trip_detail_start_label"
-        app:layout_constraintStart_toEndOf="@+id/trip_detail_start_label"
-        app:layout_constraintTop_toBottomOf="@+id/trip_detail_title" />
+        app:layout_constraintBottom_toBottomOf="@+id/detail_start_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_start_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_start_label" />
 
     <TextView
         android:id="@+id/detail_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
         android:layout_marginBottom="8dp"
         android:text="start-time"
         android:textColor="@android:color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/trip_detail_start_label"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_start_label"
         app:layout_constraintStart_toEndOf="@+id/detail_start_date"
-        app:layout_constraintTop_toBottomOf="@+id/trip_detail_title"
+        app:layout_constraintTop_toTopOf="@+id/detail_start_date"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/detail_end_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_end_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_start_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_start_label" />
+
+    <TextView
+        android:id="@+id/detail_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="end-date"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/detail_end_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_end_label" />
+
+    <TextView
+        android:id="@+id/detail_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
+        android:text="end-time"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/detail_end_date"
+        app:layout_constraintTop_toTopOf="@+id/detail_end_date" />
+
+    <TextView
+        android:id="@+id/detail_location_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_location_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_end_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_end_label" />
+
+    <Spinner
+        android:id="@+id/detail_location_spinner"
+        android:layout_width="240dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_location_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detail_location_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_location_label" />
+
+    <TextView
+        android:id="@+id/detail_lake_level_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_lake_level_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_location_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_location_label" />
+
+    <EditText
+        android:id="@+id/detail_lake_level_entry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_lake_level_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detail_lake_level_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_lake_level_label" />
+
+    <TextView
+        android:id="@+id/detail_air_temp_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_air_temp_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_lake_level_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_lake_level_label" />
+
+    <EditText
+        android:id="@+id/detail_air_temp_entry"
+        android:layout_width="259dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_air_temp_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_air_temp_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_air_temp_label" />
+
+    <TextView
+        android:id="@+id/detail_air_temp_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="F"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_air_temp_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.789"
+        app:layout_constraintStart_toEndOf="@+id/detail_air_temp_entry"
+        app:layout_constraintTop_toTopOf="@+id/detail_air_temp_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/detail_enable_temp_tracking_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_enable_temp_tracking"
+        app:layout_constraintStart_toStartOf="@+id/detail_air_temp_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_air_temp_label" />
+
+    <TextView
+        android:id="@+id/detail_water_temp_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_water_temp_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_air_temp_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_enable_temp_tracking_check" />
+
+    <EditText
+        android:id="@+id/detail_water_temp_entry"
+        android:layout_width="227dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_water_temp_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_water_temp_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_water_temp_label" />
+
+    <TextView
+        android:id="@+id/detail_wind_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_wind_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_water_temp_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_water_temp_entry" />
+
+    <EditText
+        android:id="@+id/detail_wind_speed_entry"
+        android:layout_width="71dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:inputType="number"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_wind_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_wind_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_wind_label" />
+
+    <TextView
+        android:id="@+id/detail_wind_speed_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="mph"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_wind_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_wind_speed_entry"
+        app:layout_constraintTop_toTopOf="@+id/detail_wind_label" />
+
+    <Spinner
+        android:id="@+id/detail_wind_dir_spinner"
+        android:layout_width="88dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_wind_label"
+        app:layout_constraintStart_toEndOf="@+id/detail_wind_speed_units"
+        app:layout_constraintTop_toTopOf="@+id/detail_wind_label" />
+
+    <Spinner
+        android:id="@+id/detail_wind_strength_spinner"
+        android:layout_width="121dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_wind_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detail_wind_dir_spinner"
+        app:layout_constraintTop_toTopOf="@+id/detail_wind_label" />
+
+    <TextView
+        android:id="@+id/detail_precip_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_precip_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_wind_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_wind_label" />
+
+    <Spinner
+        android:id="@+id/detail_precip_spinner"
+        android:layout_width="244dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_precip_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detail_precip_label"
+        app:layout_constraintTop_toTopOf="@+id/detail_precip_label" />
+
+    <TextView
+        android:id="@+id/detail_notes_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_notes_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_precip_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_precip_label" />
+
+    <EditText
+        android:id="@+id/detail_notes_field"
+        android:layout_width="340dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:editable="true"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detail_notes_label" />
+
+    <TextView
+        android:id="@+id/detail_audio_notes_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/detail_audio_notes_label"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/detail_notes_label"
+        app:layout_constraintTop_toBottomOf="@+id/detail_notes_field" />
+
+    <Button
+        android:id="@+id/details_add_audio_note_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/detail_add_audio_note_label"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_audio_notes_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/detail_audio_notes_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
