@@ -65,7 +65,7 @@ public class TripManager
                t.setWaterTemp(new Temperature((int) props[5]));
                t.setWindSpeed((int) props[6]);
                t.setWindDirection(Trip.Direction.valueOf((String) props[7]));
-               t.setWindStrength(Trip.Strength.valueOf((String) props[8]));
+               t.setWindStrength(Trip.WindStrength.valueOf((String) props[8]));
                t.setPrecipitation(Trip.Precipitation.valueOf((String) props[9]));
                t.setNotes((String) props[10]);
                _instance._trips.add(t);
@@ -249,9 +249,9 @@ public class TripManager
       return Trip.Direction.values();
    }
 
-   public Trip.Strength[] getAllWindStrengths()
+   public Trip.WindStrength[] getAllWindStrengths()
    {
-      return Trip.Strength.values();
+      return Trip.WindStrength.values();
    }
 
    public Trip.Precipitation[] getAllPrecipitations()

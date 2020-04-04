@@ -21,4 +21,6 @@ public class AudioNote
    {
       _label = s;
    }
+
+   public String toString() { return getLabel(); }
 }

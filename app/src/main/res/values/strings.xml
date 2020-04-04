@@ -17,13 +17,15 @@
     <string name="detail_start_label">Trip Start:</string>
     <string name="detail_end_label">Trip End:</string>
     <string name="detail_location_label">Location:</string>
-    <string name="detail_lake_level_label">Lake Level:</string>
+    <string name="detail_lake_level_label">Level:</string>
     <string name="detail_air_temp_label">Air Temp:</string>
-    <string name="detail_enable_temp_tracking">Track Air Temperature</string>
+    <string name="detail_enable_temp_tracking">Track</string>
     <string name="detail_water_temp_label">Water Temp:</string>
     <string name="detail_wind_label">Wind:</string>
     <string name="detail_precip_label">Precipitation:</string>
     <string name="detail_notes_label">Notes:</string>
     <string name="detail_audio_notes_label">Audio Notes:</string>
     <string name="detail_add_audio_note_label">Add...</string>
+    <string name="detail_play_audio_note_label">Play</string>
+    <string name="detail_edit_audio_note_label">Edit...</string>
 </resources>

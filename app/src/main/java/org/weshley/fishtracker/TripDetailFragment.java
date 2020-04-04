@@ -5,13 +5,17 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -23,11 +27,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TripDetailFragment
    extends AbstractFragment
-   implements SelectedTripChangeListener, AdapterView.OnItemSelectedListener,
-              TripLocationsChangeListener
+   implements SelectedTripChangeListener, TripLocationsChangeListener,
+              TripListChangeListener
 {
    private ViewGroup _rootView = null;
    private HashMap<String,Integer> _locationMap;
@@ -45,56 +50,161 @@ public class TripDetailFragment
          R.layout.trip_detail_fragment, container, false);
 
       initEditors();
-      getTripManager().addSelectedTripChangeListener(this);
-      getTripManager().addTripLocationsChangeListener(this);
+      initListeners();
       updateUi();
 
       return _rootView;
    }
-
+   @Override
    public void selectedTripChanged(SelectedTripChangeEvent ev)
    {
       updateUi();
    }
 
+   @Override
+   public void tripListChanged(TripListChangeEvent e)
+   {
+      // we can get this when an active trip is ended.  need to update end date/time
+      if(e.getChangedTrip() == getSelectedTrip())
+      {
+         updateEndTripControls();
+         updateTripLabel();
+      }
+   }
+
+   @Override
    public void tripLocationsChanged(TripLocationsChangeEvent ev)
    {
       initLocationEditor();
       setLocationSelection(ev.getLocation());
    }
 
-   public void onItemSelected(
-      AdapterView<?> parent, View view, int pos, long id)
+   private void updateTripLabel()
    {
-      if(parent == getLocationControl())
-      {
-         String loc = (String) parent.getItemAtPosition(pos);
-         if(Config.OTHER_LOCATION_LABEL.equals(loc))
-         {
-            final EditText input = new EditText(getContext());
-            new AlertDialog.Builder(getContext())
-               .setTitle("Enter New Trip Location")
-               .setView(input)
-               .setIcon(android.R.drawable.ic_dialog_alert)
-               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
-                  {
-                     public void onClick(DialogInterface dialog, int whichButton)
-                     {
-                        String loc = input.getText().toString();
-                        getSelectedTrip().setLocation(loc);
-                     }
-                  })
-               .setNegativeButton(android.R.string.no, null).show();
-         }
-         else
-         {
-            getSelectedTrip().setLocation(loc);
-         }
-      }
+      Trip t = getSelectedTrip();
+      if(null != t)
+         getTitleView().setText(getTripManager().getDisplayableTripLabel(t));
    }
 
-   public void onNothingSelected(AdapterView<?> parent)
+   private void initListeners()
    {
+      getTripManager().addSelectedTripChangeListener(this);
+      getTripManager().addTripLocationsChangeListener(this);
+      getTripManager().addTripListChangeListener(this);
+
+      getTrackingAirTempControl().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+      {
+         @Override
+         public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+         {
+            getSelectedTrip().setTrackingLocation(b);
+         }
+      });
+
+      getLakeLevelControl().addTextChangedListener(new TextWatcher()
+      {
+         @Override
+         public void afterTextChanged(Editable e)
+         {
+            String s = e.toString();
+            if(s.length() > 0)
+              getSelectedTrip().setLakeLevel(Integer.parseInt(s));
+         }
+
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+         @Override
+         public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getAirTempControl().addTextChangedListener(new TextWatcher()
+      {
+         @Override
+         public void afterTextChanged(Editable e)
+         {
+            String s = e.toString();
+            if(s.length() > 0)
+               getSelectedTrip().setAirTemp(new Temperature(Integer.parseInt(s)));
+         }
+
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+         @Override
+         public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getWaterTempControl().addTextChangedListener(new TextWatcher()
+      {
+         @Override
+         public void afterTextChanged(Editable e)
+         {
+            String s = e.toString();
+            if(s.length() > 0)
+               getSelectedTrip().setWaterTemp(new Temperature(Integer.parseInt(s)));
+         }
+
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+         @Override
+         public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getWindSpeedControl().addTextChangedListener(new TextWatcher()
+      {
+         @Override
+         public void afterTextChanged(Editable e)
+         {
+            String s = e.toString();
+            if(s.length() > 0)
+               getSelectedTrip().setWindSpeed(Integer.parseInt(s));
+         }
+
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+         @Override
+         public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getNotesControl().addTextChangedListener(new TextWatcher()
+      {
+         @Override
+         public void afterTextChanged(Editable e)
+         {
+            String s = e.toString();
+            getSelectedTrip().setNotes(s);
+         }
+
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+         @Override
+         public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getAddAudioNoteButton().setOnClickListener(new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View view)
+         {
+            addNewAudioNote();
+         }
+      });
+   }
+
+   private void addNewAudioNote()
+   {
+      String label = Calendar.getInstance().getTime().toString();
+      AudioNote note = new AudioNote(label, null);
+      getSelectedTrip().addAudioNote(note);
+      Spinner spinner = getAudioNoteControl();
+      ArrayAdapter<AudioNote> adapter = (ArrayAdapter<AudioNote>) spinner.getAdapter();
+      adapter.add(note);
+      spinner.setSelection(adapter.getCount() - 1);
+      updateAudioNoteButtonState();
    }
 
    private void updateUi()
@@ -103,9 +213,29 @@ public class TripDetailFragment
       if(null == t)
          return;
 
-      getTitleView().setText(getTripManager().getDisplayableTripLabel(t));
+      updateTripLabel();
       getStartDateView().setText(Config.getDateFormat().format(t.getStart()));
       getStartTimeView().setText(Config.getTimeFormat().format(t.getStart()));
+
+      updateEndTripControls();
+
+      setLocationSelection(t.getLocation());
+      setLakeLevel(t.getLakeLevel());
+      setAirTemp(t.getAirTemp());
+      setTrackingAirTemp(t.isTrackingTemp());
+      setWaterTemp(t.getWaterTemp());
+      setWindSpeed(t.getWindSpeed());
+      setWindDirection(t.getWindDirection());
+      setWindStrength(t.getWindStrength());
+      setPrecipitation(t.getPrecipitation());
+      setNotes(t.getNotes());
+   }
+
+   private void updateEndTripControls()
+   {
+      Trip t = getSelectedTrip();
+      if(null == t)
+         return;
 
       boolean isActive = (getSelectedTrip() == getTripManager().getActiveTrip());
       getEndDateView().setEnabled(!isActive);
@@ -120,17 +250,6 @@ public class TripDetailFragment
          getEndDateView().setText(Config.getDateFormat().format(t.getEnd()));
          getEndTimeView().setText(Config.getTimeFormat().format(t.getEnd()));
       }
-
-      setLocationSelection(t.getLocation());
-      setLakeLevel(t.getLakeLevel());
-      setAirTemp(t.getAirTemp());
-      setTrackingAirTemp(t.isTrackingTemp());
-      setWaterTemp(t.getWaterTemp());
-      setWindSpeed(t.getWindSpeed());
-      setWindDirection(t.getWindDirection());
-      setWindStrength(t.getWindStrength());
-      setPrecipitation(t.getPrecipitation());
-      setNotes(t.getNotes());
    }
 
    private void setWindSpeed(Integer speed)
@@ -149,7 +268,7 @@ public class TripDetailFragment
       getPrecipitationControl().setSelection(pos);
    }
 
-   private void setWindStrength(Trip.Strength strength)
+   private void setWindStrength(Trip.WindStrength strength)
    {
       int pos = -1;
       if(null != strength)
@@ -249,57 +368,163 @@ public class TripDetailFragment
       initWindDirectionEditor();
       initWindStrengthEditor();
       initPrecipEditor();
+      initAudioNoteList();
    }
 
    private void initWindDirectionEditor()
    {
-     Spinner editor = getWindDirectionControl();
-     List<Trip.Direction> itemList = new ArrayList<>();
-     for(Trip.Direction dir : getTripManager().getAllWindDirections())
-       itemList.add(dir);
-     ArrayAdapter<Trip.Direction> spinnerArrayAdapter = new ArrayAdapter<>(
-        this.getContext(), R.layout.spinner_item, itemList);
-     editor.setAdapter(spinnerArrayAdapter);
-     editor.setOnItemSelectedListener(this);
+      Spinner editor = getWindDirectionControl();
+      List<Trip.Direction> itemList = new ArrayList<>();
+      for(Trip.Direction dir : getTripManager().getAllWindDirections())
+         itemList.add(dir);
+      ArrayAdapter<Trip.Direction> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, itemList);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+           AdapterView<?> parent, View view, int pos, long id)
+         {
+            Trip.Direction dir = (Trip.Direction) parent.getItemAtPosition(pos);
+            getSelectedTrip().setWindDirection(dir);
+         }
+      });
    }
 
    private void initWindStrengthEditor()
    {
-     Spinner editor = getWindStrengthControl();
-     List<Trip.Strength> itemList = new ArrayList<>();
-     for(Trip.Strength str : getTripManager().getAllWindStrengths())
-       itemList.add(str);
-     ArrayAdapter<Trip.Strength> spinnerArrayAdapter = new ArrayAdapter<>(
-        this.getContext(), R.layout.spinner_item, itemList);
-     editor.setAdapter(spinnerArrayAdapter);
-     editor.setOnItemSelectedListener(this);
+      Spinner editor = getWindStrengthControl();
+      List<Trip.WindStrength> itemList = new ArrayList<>();
+      for(Trip.WindStrength str : getTripManager().getAllWindStrengths())
+         itemList.add(str);
+      ArrayAdapter<Trip.WindStrength> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, itemList);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+           AdapterView<?> parent, View view, int pos, long id)
+         {
+            Trip.WindStrength str = (Trip.WindStrength) parent.getItemAtPosition(pos);
+            getSelectedTrip().setWindStrength(str);
+         }
+      });
    }
 
    private void initPrecipEditor()
    {
-     Spinner editor = getPrecipitationControl();
-     List<Trip.Precipitation> itemList = new ArrayList<>();
-     for(Trip.Precipitation str : getTripManager().getAllPrecipitations())
-       itemList.add(str);
-     ArrayAdapter<Trip.Precipitation> spinnerArrayAdapter = new ArrayAdapter<>(
-        this.getContext(), R.layout.spinner_item, itemList);
-     editor.setAdapter(spinnerArrayAdapter);
-     editor.setOnItemSelectedListener(this);   }
+      Spinner editor = getPrecipitationControl();
+      List<Trip.Precipitation> itemList = new ArrayList<>();
+      for(Trip.Precipitation precip : getTripManager().getAllPrecipitations())
+         itemList.add(precip);
+      ArrayAdapter<Trip.Precipitation> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, itemList);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+           AdapterView<?> parent, View view, int pos, long id)
+         {
+            Trip.Precipitation precip = (Trip.Precipitation) parent.getItemAtPosition(pos);
+            getSelectedTrip().setPrecipitation(precip);
+         }
+      });
+   }
+
+   private void initAudioNoteList()
+   {
+      Spinner spinner = getAudioNoteControl();
+      List<AudioNote> noteList = new ArrayList<>();
+      // Map<String, AudioNote> getAudioNotes
+      for(AudioNote note : getSelectedTrip().getAudioNotes().values())
+         noteList.add(note);
+      ArrayAdapter<AudioNote> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, noteList);
+      spinner.setAdapter(spinnerArrayAdapter);
+      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent)
+         {
+            updateAudioNoteButtonState();
+         }
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            updateAudioNoteButtonState();
+         }
+     });
+
+     updateAudioNoteButtonState();
+   }
+
+   private void updateAudioNoteButtonState()
+   {
+      Spinner spinner = getAudioNoteControl();
+      getEditAudioNoteButton().setEnabled(spinner.getSelectedItem() != null);
+      getPlayAudioNoteButton().setEnabled(spinner.getSelectedItem() != null);
+   }
 
    private void initLocationEditor()
    {
-     Spinner locationEditor = getLocationControl();
-     List<String> locList = new ArrayList<>();
-     locList.add(Config.OTHER_LOCATION_LABEL);
-     for(String loc : getTripManager().getAllLocations())
-       locList.add(loc);
-     _locationMap = new HashMap<String,Integer>();
-     for(int i = 0; i < locList.size(); ++i)
-        _locationMap.put(locList.get(i), i);
-     ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
-        this.getContext(), R.layout.spinner_item, locList);
-     locationEditor.setAdapter(spinnerArrayAdapter);
-     locationEditor.setOnItemSelectedListener(this);
+      Spinner locationEditor = getLocationControl();
+      List<String> locList = new ArrayList<>();
+      locList.add(Config.OTHER_LOCATION_LABEL);
+      for(String loc : getTripManager().getAllLocations())
+         locList.add(loc);
+      _locationMap = new HashMap<String,Integer>();
+      for(int i = 0; i < locList.size(); ++i)
+         _locationMap.put(locList.get(i), i);
+      ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, locList);
+      locationEditor.setAdapter(spinnerArrayAdapter);
+      locationEditor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            String loc = (String) parent.getItemAtPosition(pos);
+            if(Config.OTHER_LOCATION_LABEL.equals(loc))
+            {
+               final EditText input = new EditText(getContext());
+               new AlertDialog.Builder(getContext())
+                .setTitle("Enter New Trip Location")
+                .setView(input)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                  {
+                     public void onClick(DialogInterface dialog, int whichButton)
+                     {
+                        String loc = input.getText().toString();
+                        getSelectedTrip().setLocation(loc);
+                     }
+                  })
+               .setNegativeButton(android.R.string.no, null).show();
+            }
+            else
+            {
+               getSelectedTrip().setLocation(loc);
+            }
+         }
+     });
    }
 
    private void initStartDateEditor()
@@ -463,6 +688,11 @@ public class TripDetailFragment
       return (Spinner) _rootView.findViewById(R.id.detail_location_spinner);
    }
 
+   private Spinner getAudioNoteControl()
+   {
+      return (Spinner) _rootView.findViewById(R.id.detail_audio_notes_list);
+   }
+
    private Spinner getWindDirectionControl()
    {
       return (Spinner) _rootView.findViewById(R.id.detail_wind_dir_spinner);
@@ -513,6 +743,21 @@ public class TripDetailFragment
       return (EditText) _rootView.findViewById(R.id.detail_notes_field);
    }
 
+   private Button getAddAudioNoteButton()
+   {
+      return (Button) _rootView.findViewById(R.id.details_add_audio_note_button);
+   }
+
+   private Button getEditAudioNoteButton()
+   {
+      return (Button) _rootView.findViewById(R.id.details_edit_audio_note_button);
+   }
+
+   private Button getPlayAudioNoteButton()
+   {
+      return (Button) _rootView.findViewById(R.id.details_play_audio_note_button);
+   }
+
    private EditText getWindSpeedControl()
    {
       return (EditText) _rootView.findViewById(R.id.detail_wind_speed_entry);
@@ -547,6 +792,5 @@ public class TripDetailFragment
    {
       return TripManager.instance();
    }
-
 
 }

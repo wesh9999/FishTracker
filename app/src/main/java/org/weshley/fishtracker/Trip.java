@@ -10,7 +10,7 @@ public class Trip
 {
    public enum Direction
       {Variable, N, NE, E, SE, S, SW, W, NW}
-   public enum Strength
+   public enum WindStrength
       {Intermittent, Steady, Growing, Waning}
    public enum Precipitation
       {Clear, PartlyCloudy, MostlyCloudy, SolidClouds, LightRain, HeavyRain}
@@ -31,7 +31,7 @@ public class Trip
    private Temperature _waterTemp = null;
    private Integer _windSpeed = null;
    private Direction _windDirection = null;
-   private Strength _windStrength = null;
+   private WindStrength _windStrength = null;
    private Precipitation _precip = null;
    private String _notes = null;
    private Map<String, AudioNote> _audioNotes = null;
@@ -151,12 +151,12 @@ public class Trip
       return _windDirection;
    }
 
-   public void setWindStrength(Strength str)
+   public void setWindStrength(WindStrength str)
    {
       _windStrength = str;
    }
 
-   public Strength getWindStrength()
+   public WindStrength getWindStrength()
    {
       return _windStrength;
    }
