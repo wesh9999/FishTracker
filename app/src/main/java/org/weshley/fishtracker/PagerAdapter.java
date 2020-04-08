@@ -13,7 +13,8 @@ public class PagerAdapter extends FragmentPagerAdapter
 
    static final Class[] FRAGMENT_LAYOUTS =
    {
-      TripsFragment.class, TripDetailFragment.class, FishListFragment.class
+      TripsFragment.class, TripDetailFragment.class, FishListFragment.class,
+      FishDetailFragment.class
    };
 
    private String[] _fragmentLabelCache = null;

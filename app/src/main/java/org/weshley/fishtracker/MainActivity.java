@@ -132,7 +132,7 @@ public class MainActivity
 
    private void handleFishButtonClick(Button b)
    {
-      // TODO - needs to be implemented
+      UiManager.instance().showPage(FishDetailFragment.class);
    }
 
    private Button getTripButton()

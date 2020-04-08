@@ -3,4 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="darkBackgroundBand">#17007ECC</color>
+    <color name="lightBackgroundBand">#0C007ECC</color>
+    <color name="field_label_color">#000000</color>
 </resources>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+         <!-- Header -->
+         <TextView
+             android:id="@+id/fish_detail_title"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@android:color/holo_blue_light"
+             android:gravity="center_vertical|center_horizontal"
+             android:text="@string/trip_detail_label"
+             android:textAppearance="?android:attr/textAppearanceMedium"
+             android:textColor="@android:color/black"
+             android:textSize="30sp" />
+
+         <!--
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@android:color/holo_green_light"
+             android:orientation="vertical">
+         </LinearLayout>
+-->
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/darkBackgroundBand">
+
+            <TextView
+                android:id="@+id/fish_detail_species_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/fish_detail_species_label"
+                android:textColor="@color/field_label_color"
+                android:textSize="@dimen/field_label_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/fish_detail_length_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/fish_detail_length_label"
+                android:textColor="@color/field_label_color"
+                android:textSize="@dimen/field_label_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/fish_detail_species_label"
+                app:layout_constraintTop_toBottomOf="@+id/fish_detail_species_label" />
+
+            <TextView
+                android:id="@+id/fish_detail_weight_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/fish_detail_weight_label"
+                android:textColor="@color/field_label_color"
+                android:textSize="@dimen/field_label_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/fish_detail_length_label"
+                app:layout_constraintTop_toBottomOf="@+id/fish_detail_length_label" />
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/lightBackgroundBand"
+             android:orientation="vertical"
+             app:layout_constraintStart_toStartOf="parent"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/darkBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/lightBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/darkBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/lightBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/darkBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/lightBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/darkBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@color/lightBackgroundBand"
+             android:orientation="vertical"></LinearLayout>
+
+
+      </LinearLayout>
+
+   </ScrollView>
+
+</LinearLayout>
