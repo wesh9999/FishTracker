@@ -63,20 +63,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/detail_when_where_label" />
 
                 <TextView
-                    android:id="@+id/detail_start_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:gravity="center_vertical"
-                    android:text="start-date"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/field_value_size"
-                    app:layout_constraintBottom_toBottomOf="@+id/detail_start_time"
-                    app:layout_constraintStart_toEndOf="@+id/detail_start_time"
-                    app:layout_constraintTop_toTopOf="@+id/detail_start_time" />
-
-                <TextView
                     android:id="@+id/detail_start_time"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -89,6 +75,20 @@
                     app:layout_constraintBottom_toBottomOf="@+id/detail_start_label"
                     app:layout_constraintStart_toEndOf="@+id/detail_start_label"
                     app:layout_constraintTop_toTopOf="@+id/detail_start_label" />
+
+                <TextView
+                    android:id="@+id/detail_start_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="start-date"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/detail_start_time"
+                    app:layout_constraintStart_toEndOf="@+id/detail_start_time"
+                    app:layout_constraintTop_toTopOf="@+id/detail_start_time" />
 
                 <!-- Trip End -->
                 <TextView
@@ -104,20 +104,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/detail_start_label" />
 
                 <TextView
-                    android:id="@+id/detail_end_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:gravity="center_vertical"
-                    android:text="end-date"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/field_value_size"
-                    app:layout_constraintBottom_toBottomOf="@+id/detail_end_time"
-                    app:layout_constraintStart_toEndOf="@+id/detail_end_time"
-                    app:layout_constraintTop_toTopOf="@+id/detail_end_time" />
-
-                <TextView
                     android:id="@+id/detail_end_time"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -130,6 +116,20 @@
                     app:layout_constraintBottom_toBottomOf="@+id/detail_end_label"
                     app:layout_constraintStart_toEndOf="@+id/detail_end_label"
                     app:layout_constraintTop_toTopOf="@+id/detail_end_label" />
+
+                <TextView
+                    android:id="@+id/detail_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="end-date"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/detail_end_time"
+                    app:layout_constraintStart_toEndOf="@+id/detail_end_time"
+                    app:layout_constraintTop_toTopOf="@+id/detail_end_time" />
 
                 <!-- Location -->
                 <TextView

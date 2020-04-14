@@ -2,138 +2,727 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-   <ScrollView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-         <!-- Header -->
-         <TextView
-             android:id="@+id/fish_detail_title"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="@android:color/holo_blue_light"
-             android:gravity="center_vertical|center_horizontal"
-             android:text="@string/trip_detail_label"
-             android:textAppearance="?android:attr/textAppearanceMedium"
-             android:textColor="@android:color/black"
-             android:textSize="30sp" />
-
-         <!--
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@android:color/holo_green_light"
-             android:orientation="vertical">
-         </LinearLayout>
--->
-         <androidx.constraintlayout.widget.ConstraintLayout
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="@color/darkBackgroundBand">
-
+            <!-- Header -->
             <TextView
-                android:id="@+id/fish_detail_species_label"
-                android:layout_width="wrap_content"
+                android:id="@+id/fish_detail_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/fish_detail_species_label"
-                android:textColor="@color/field_label_color"
-                android:textSize="@dimen/field_label_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:background="@android:color/holo_blue_light"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/trip_detail_label"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/fish_detail_length_label"
-                android:layout_width="wrap_content"
+            <!-- Fish Details -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/fish_detail_length_label"
-                android:textColor="@color/field_label_color"
-                android:textSize="@dimen/field_label_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/fish_detail_species_label"
-                app:layout_constraintTop_toBottomOf="@+id/fish_detail_species_label" />
+                android:background="@color/darkBackgroundBand">
 
-            <TextView
-                android:id="@+id/fish_detail_weight_label"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/fish_detail_fish_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="----- Fish -----------------------------------------------------------------"
+                    android:textStyle="italic"
+                    app:fontFamily="monospace"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- When Caught -->
+               <TextView
+                   android:id="@+id/fish_detail_caught_label"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="8dp"
+                   android:layout_marginLeft="8dp"
+                   android:layout_marginTop="8dp"
+                   android:text="@string/fish_detail_caught_label"
+                   android:textColor="@color/field_label_color"
+                   android:textSize="@dimen/field_label_size"
+                   android:textStyle="bold"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/fish_detail_fish_label" />
+
+                <TextView
+                    android:id="@+id/fish_detail_caught_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="caught-time"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_caught_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_caught_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_caught_label" />
+
+                <TextView
+                    android:id="@+id/fish_detail_caught_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="caught-date"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_caught_time"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_caught_time"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_caught_time" />
+
+               <!-- Species -->
+               <TextView
+                   android:id="@+id/fish_detail_species_label"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="8dp"
+                   android:text="@string/fish_detail_species_label"
+                   android:textColor="@color/field_label_color"
+                   android:textSize="@dimen/field_label_size"
+                   android:textStyle="bold"
+                   app:layout_constraintStart_toStartOf="@+id/fish_detail_caught_label"
+                   app:layout_constraintTop_toBottomOf="@+id/fish_detail_caught_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_species_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:dropDownWidth="wrap_content"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_species_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_species_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_species_label" />
+
+                <!-- Length -->
+                <TextView
+                    android:id="@+id/fish_detail_length_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_length_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_species_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_species_label" />
+
+                <EditText
+                    android:id="@+id/fish_detail_length_entry"
+                    android:layout_width="66dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_length_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_length_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_length_label"/>
+
+                <TextView
+                    android:id="@+id/fish_detail_length_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="in"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_length_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_length_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_length_label"
+                    app:layout_constraintVertical_bias="0.0" />
+
+               <!-- Weight -->
+               <TextView
+                   android:id="@+id/fish_detail_weight_label"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="30dp"
+                   android:layout_marginLeft="30dp"
+                   android:text="@string/fish_detail_weight_label"
+                   android:textColor="@color/field_label_color"
+                   android:textSize="@dimen/field_label_size"
+                   android:textStyle="bold"
+                   app:layout_constraintBottom_toBottomOf="@+id/fish_detail_length_label"
+                   app:layout_constraintStart_toEndOf="@+id/fish_detail_length_units"
+                   app:layout_constraintTop_toTopOf="@+id/fish_detail_length_label"
+                   app:layout_constraintVertical_bias="0.125" />
+
+                <EditText
+                    android:id="@+id/fish_detail_weight_entry"
+                    android:layout_width="66dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_weight_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_weight_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_weight_label"/>
+
+                <TextView
+                    android:id="@+id/fish_detail_weight_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="lbs"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_weight_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_weight_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_weight_label"
+                    app:layout_constraintVertical_bias="0.0" />
+
+               <!-- Lure -->
+               <TextView
+                   android:id="@+id/fish_detail_lure_label"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="8dp"
+                   android:text="@string/fish_detail_lure_label"
+                   android:textColor="@color/field_label_color"
+                   android:textSize="@dimen/field_label_size"
+                   android:textStyle="bold"
+                   app:layout_constraintStart_toStartOf="@+id/fish_detail_length_label"
+                   app:layout_constraintTop_toBottomOf="@+id/fish_detail_length_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_lure_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="8dp"
+                    android:dropDownWidth="wrap_content"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_lure_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_lure_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_lure_label" />
+
+                <TextView
+                    android:id="@+id/fish_detail_lure_size_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="@string/fish_detail_lure_size_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_lure_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_lure_spinner"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_lure_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_lure_size_spinner"
+                    android:layout_width="100dp"
+                    android:layout_height="26dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:dropDownWidth="wrap_content"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_lure_size_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_lure_size_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_lure_size_label" />
+
+               <!-- Landed -->
+                <TextView
+                    android:id="@+id/fish_detail_landed_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_landed_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_lure_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_lure_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_landed_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:dropDownWidth="wrap_content"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_landed_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_landed_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_landed_label" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Environment -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/fish_detail_weight_label"
-                android:textColor="@color/field_label_color"
-                android:textSize="@dimen/field_label_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/fish_detail_length_label"
-                app:layout_constraintTop_toBottomOf="@+id/fish_detail_length_label" />
-         </androidx.constraintlayout.widget.ConstraintLayout>
+                android:background="@color/lightBackgroundBand">
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/lightBackgroundBand"
-             android:orientation="vertical"
-             app:layout_constraintStart_toStartOf="parent"></LinearLayout>
+                <TextView
+                    android:id="@+id/fish_detail_env_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="----- Environment -----------------------------------------------------------------"
+                    android:textStyle="italic"
+                    app:fontFamily="monospace"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/darkBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <!-- Air temp -->
+                <TextView
+                    android:id="@+id/fish_detail_air_temp_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_air_temp_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_env_label" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/lightBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <EditText
+                    android:id="@+id/fish_detail_air_temp_entry"
+                    android:layout_width="40dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="numberSigned"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_air_temp_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_air_temp_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_air_temp_label" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/darkBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <TextView
+                    android:id="@+id/fish_detail_air_temp_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="F"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_air_temp_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_air_temp_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_air_temp_label"
+                    app:layout_constraintVertical_bias="0.0" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/lightBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <!-- Water temp -->
+                <TextView
+                    android:id="@+id/fish_detail_water_temp_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_water_temp_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_air_temp_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_air_temp_label" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/darkBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <EditText
+                    android:id="@+id/fish_detail_water_temp_entry"
+                    android:layout_width="40dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_water_temp_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_water_temp_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_water_temp_label" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/lightBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <TextView
+                    android:id="@+id/fish_detail_water_temp_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="F"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_water_temp_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_water_temp_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_water_temp_label"
+                    app:layout_constraintVertical_bias="0.0" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/darkBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <!-- Water depth -->
+                <TextView
+                    android:id="@+id/fish_detail_water_depth_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_water_depth_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_water_temp_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_water_temp_label" />
 
-         <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="100dp"
-             android:background="@color/lightBackgroundBand"
-             android:orientation="vertical"></LinearLayout>
+                <EditText
+                    android:id="@+id/fish_detail_water_depth_entry"
+                    android:layout_width="40dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_water_depth_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_water_depth_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_water_depth_label" />
 
+                <TextView
+                    android:id="@+id/fish_detail_water_depth_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="ft"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_water_depth_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_water_depth_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_water_depth_label"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <!-- Wind -->
+                <TextView
+                    android:id="@+id/fish_detail_wind_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_wind_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_water_depth_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_water_depth_label" />
+
+                <EditText
+                    android:id="@+id/fish_detail_wind_speed_entry"
+                    android:layout_width="40dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:ems="10"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_wind_label" />
+
+                <TextView
+                    android:id="@+id/fish_detail_wind_speed_units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center_vertical"
+                    android:text="mph"
+                    android:textSize="@dimen/field_value_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_wind_speed_entry"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_wind_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_wind_dir_spinner"
+                    android:layout_width="88dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_wind_speed_units"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintVertical_bias="0.4" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_wind_strength_spinner"
+                    android:layout_width="121dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="2dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_wind_dir_spinner"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_wind_label" />
+
+                <!-- Precipitation -->
+                <TextView
+                    android:id="@+id/fish_detail_precip_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/fish_detail_precip_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_wind_label"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_wind_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_precip_spinner"
+                    android:layout_width="244dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="4dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_precip_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_precip_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_precip_label" />
+
+                <!-- GPS Location -->
+                <TextView
+                    android:id="@+id/fish_detail_gps_loc_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fish_detail_gps_loc_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_precip_label"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_precip_label" />
+
+                <TextView
+                    android:id="@+id/fish_detail_gps_loc_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_vertical"
+                    android:text="gps location"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/field_label_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_gps_loc_label"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_gps_loc_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_gps_loc_label" />
+
+                <!-- Cover -->
+                <TextView
+                    android:id="@+id/fish_detail_cover_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/fish_detail_cover_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_gps_loc_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_gps_loc_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_cover_spinner"
+                    android:layout_width="244dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="4dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_cover_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fish_detail_cover_label"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_cover_label" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Photo -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/darkBackgroundBand">
+
+                <TextView
+                    android:id="@+id/fish_detail_photo_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="----- Photo -----------------------------------------------------------------"
+                    android:textStyle="italic"
+                    app:fontFamily="monospace"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Notes -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightBackgroundBand">
+
+                <TextView
+                    android:id="@+id/fish_detail_notes_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="----- Notes -----------------------------------------------------------------"
+                    android:textStyle="italic"
+                    app:fontFamily="monospace"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Notes -->
+                <TextView
+                    android:id="@+id/fish_detail_notes_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fish_detail_notes_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_notes_header" />
+
+                <EditText
+                    android:id="@+id/fish_detail_notes_field"
+                    android:layout_width="342dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/darkBackgroundBand"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:isScrollContainer="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_notes_label" />
+
+                <!-- Audio notes -->
+                <TextView
+                    android:id="@+id/fish_detail_audio_notes_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fish_detail_audio_notes_label"
+                    android:textColor="@color/field_label_color"
+                    android:textSize="@dimen/field_label_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_notes_label"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_notes_field" />
+
+                <Button
+                    android:id="@+id/fish_details_play_audio_note_button"
+                    android:layout_width="66dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:enabled="false"
+                    android:text="@string/fish_detail_play_audio_note_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_details_edit_audio_note_button"
+                    app:layout_constraintEnd_toStartOf="@+id/fish_details_edit_audio_note_button"
+                    app:layout_constraintTop_toTopOf="@+id/fish_details_edit_audio_note_button" />
+
+                <Button
+                    android:id="@+id/fish_details_edit_audio_note_button"
+                    android:layout_width="71dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:enabled="false"
+                    android:text="@string/fish_detail_edit_audio_note_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_details_add_audio_note_button"
+                    app:layout_constraintEnd_toStartOf="@+id/fish_details_add_audio_note_button"
+                    app:layout_constraintTop_toTopOf="@+id/fish_details_add_audio_note_button" />
+
+                <Button
+                    android:id="@+id/fish_details_add_audio_note_button"
+                    android:layout_width="78dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/fish_detail_add_audio_note_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fish_detail_audio_notes_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fish_detail_audio_notes_label" />
+
+                <Spinner
+                    android:id="@+id/fish_detail_audio_notes_list"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/fish_detail_notes_field"
+                    app:layout_constraintStart_toStartOf="@+id/fish_detail_notes_field"
+                    app:layout_constraintTop_toBottomOf="@+id/fish_detail_audio_notes_label" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
       </LinearLayout>
 

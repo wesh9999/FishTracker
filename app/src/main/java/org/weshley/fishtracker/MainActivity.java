@@ -132,6 +132,7 @@ public class MainActivity
 
    private void handleFishButtonClick(Button b)
    {
+      getTripManager().caughtNewFish();
       UiManager.instance().showPage(FishDetailFragment.class);
    }
 

@@ -33,4 +33,20 @@
     <string name="fish_detail_species_label">Species:</string>
     <string name="fish_detail_length_label">Length:</string>
     <string name="fish_detail_weight_label">Weight:</string>
+    <string name="fish_detail_caught_label">When Caught:</string>
+    <string name="fish_detail_lure_label">Lure:</string>
+    <string name="fish_detail_lure_size_label">Size:</string>
+    <string name="fish_detail_landed_label">Landed?</string>
+    <string name="fish_detail_notes_label">Notes:</string>
+    <string name="fish_detail_audio_notes_label">Audio Notes:</string>
+    <string name="fish_detail_play_audio_note_label">Play</string>
+    <string name="fish_detail_edit_audio_note_label">Edit...</string>
+    <string name="fish_detail_add_audio_note_label">Add...</string>
+    <string name="fish_detail_air_temp_label">Air Temp:</string>
+    <string name="fish_detail_water_temp_label">Water Temp:</string>
+    <string name="fish_detail_water_depth_label">Water Depth:</string>
+    <string name="fish_detail_wind_label">Wind:</string>
+    <string name="fish_detail_precip_label">Precipitation:</string>
+    <string name="fish_detail_gps_loc_label">GPS:</string>
+    <string name="fish_detail_cover_label">Cover:</string>
 </resources>

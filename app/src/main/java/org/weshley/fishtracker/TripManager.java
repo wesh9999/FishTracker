@@ -26,16 +26,19 @@ public class TripManager
    private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<TripListChangeListener>();
    private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<SelectedTripChangeListener>();
    private Set<TripLocationsChangeListener> _tripLocationsChangeListeners = new HashSet<TripLocationsChangeListener>();
-
+   private Fish _selectedFish = null;
+      // _selectedFish is the fish currently displayed in the Fish Detail tab, maybe after
+      // selecting a fish in the Fish list tab or clicking on Caught Fish button
+   private Set<SelectedFishChangeListener> _selectedFishChangeListeners = new HashSet<SelectedFishChangeListener>();
 
    private static void initTestData()
    {
       Object[][] data =
       {
          // trip-start, trip-end, location, lake level, air-temp, water-temp, wind-speed, wind-dir, wind-strength, precip, notes
-         { "2018/05/09 9:00 AM", "2018/05/09 10:00 AM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" },
-         { "2019/07/09 2:00 PM", "2019/07/09 4:00 PM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" },
-         { "2019/06/02 12:00 AM", "2019/06/02 2:00 PM", "Lake Hartwell", 660, 70, 64, 8, "SW", "Steady", "Clear", "line 1\nline 2" }
+         { "2018/05/09 9:00 AM", "2018/05/09 10:00 AM", "Lake Hartwell", 660, 70, 60, 8, "SW", "Steady", "Clear", "line 1\nline 2" },
+         { "2019/07/09 2:00 PM", "2019/07/09 4:00 PM", "Lake Hartwell", 661, 71, 61, 9, "NW", "Growing", "LightRain", "line 3\nline 4" },
+         { "2019/06/02 12:00 AM", "2019/06/02 2:00 PM", "Lake Hartwell", 662, 72, 62, 10, "E", "Waning", "PartlyCloudy", "line 5\nline 6" }
       };
 
       DateFormat fmt = Config.getDateTimeFormat();
@@ -102,6 +105,11 @@ public class TripManager
    public void addSelectedTripChangeListener(SelectedTripChangeListener listener)
    {
       _selectedTripChangeListeners.add(listener);
+   }
+
+   public void addSelectedFishChangeListener(SelectedFishChangeListener listener)
+   {
+      _selectedFishChangeListeners.add(listener);
    }
 
    public void addTripLocationsChangeListener(TripLocationsChangeListener listener)
@@ -230,6 +238,19 @@ public class TripManager
       }
    }
 
+   public void caughtNewFish()
+   {
+      _selectedFish =  getSelectedTrip().newFish();
+      fireSelectedFishChanged(_selectedFish);
+   }
+
+   public Fish getSelectedFish()
+   {
+      return _selectedFish;
+   }
+
+   // TODO - add interface for deleting a fish
+
    public void addLocation(String location)
    {
       if((null != location) && !location.isEmpty() && !_allLocations.contains(location))
@@ -282,6 +303,13 @@ public class TripManager
       SelectedTripChangeEvent ev = new SelectedTripChangeEvent(t);
       for(SelectedTripChangeListener lsnr : _selectedTripChangeListeners)
          lsnr.selectedTripChanged(ev);
+   }
+
+   void fireSelectedFishChanged(Fish f)
+   {
+      SelectedFishChangeEvent ev = new SelectedFishChangeEvent(f);
+      for(SelectedFishChangeListener lsnr : _selectedFishChangeListeners)
+         lsnr.selectedFishChanged(ev);
    }
 
    void fireTripLocationsChanged(String location)

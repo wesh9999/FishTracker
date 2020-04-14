@@ -211,8 +211,62 @@ public class TripDetailFragment
    {
       Trip t = getSelectedTrip();
       if(null == t)
-         return;
+         clearControls();
+      else
+         updateControls(t);
+   }
 
+
+   private void enableControls(boolean enabled)
+   {
+      getStartDateView().setEnabled(enabled);
+      getStartTimeView().setEnabled(enabled);
+      getEndDateView().setEnabled(enabled);
+      getEndTimeView().setEnabled(enabled);
+      getLocationControl().setEnabled(enabled);
+      getLakeLevelControl().setEnabled(enabled);
+      getAirTempControl().setEnabled(enabled);
+      getTrackingAirTempControl().setEnabled(enabled);
+      getWaterTempControl().setEnabled(enabled);
+      getWaterTempUnitsLabel().setEnabled(enabled);
+      getWindSpeedControl().setEnabled(enabled);
+      getWindDirectionControl().setEnabled(enabled);
+      getWindStrengthControl().setEnabled(enabled);
+      getPrecipitationControl().setEnabled(enabled);
+      getNotesControl().setEnabled(enabled);
+      getPlayAudioNoteButton().setEnabled(enabled);
+      getEditAudioNoteButton().setEnabled(enabled);
+      getAddAudioNoteButton().setEnabled(enabled);
+      getAudioNoteControl().setEnabled(enabled);
+   }
+
+   private void clearControls()
+   {
+      // TODO - need to test this
+
+      enableControls(false);
+      getTitleView().setText("");
+      getStartDateView().setText("");
+      getStartTimeView().setText("");
+      getEndDateView().setText("");
+      getEndTimeView().setText("");
+      setLocationSelection(null);
+      setLakeLevel(null);
+      setAirTemp(null);
+      setTrackingAirTemp(false);
+      setWaterTemp(null);
+      setWindSpeed(null);
+      setWindDirection(null);
+      setWindStrength(null);
+      setPrecipitation(null);
+      setNotes(null);
+
+      // TODO - clear audio notes list
+   }
+
+   private void updateControls(Trip t)
+   {
+      enableControls(true);
       updateTripLabel();
       getStartDateView().setText(Config.getDateFormat().format(t.getStart()));
       getStartTimeView().setText(Config.getTimeFormat().format(t.getStart()));
@@ -315,7 +369,7 @@ public class TripDetailFragment
          units = temp.getUnits().toString();
       }
       getAirTempControl().setText(val);
-      getAirTempUnitsLabel();
+      getAirTempUnitsLabel().setText(units);
    }
 
    private void setWaterTemp(Temperature temp)
@@ -328,7 +382,7 @@ public class TripDetailFragment
          units = temp.getUnits().toString();
       }
       getWaterTempControl().setText(val);
-      getWaterTempUnitsLabel();
+      getWaterTempUnitsLabel().setText(units);
    }
 
    private void setLocationSelection(String loc)

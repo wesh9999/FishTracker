@@ -6,11 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.HashMap;
-
 public class FishDetailFragment
    extends AbstractFragment
-   implements SelectedTripChangeListener, TripListChangeListener
+   implements SelectedTripChangeListener, TripListChangeListener, SelectedFishChangeListener
 {
    private ViewGroup _rootView = null;
 
@@ -26,6 +24,8 @@ public class FishDetailFragment
       _rootView = (ViewGroup) inflater.inflate(
          R.layout.fish_detail_fragment, container, false);
 
+      initEditors();
+      initListeners();
       updateUi();
 
       return _rootView;
@@ -34,7 +34,7 @@ public class FishDetailFragment
    @Override
    public void selectedTripChanged(SelectedTripChangeEvent ev)
    {
-      updateUi();
+      updateTripLabel();
    }
 
    @Override
@@ -45,14 +45,31 @@ public class FishDetailFragment
          updateTripLabel();
    }
 
+   @Override
+   public void selectedFishChanged(SelectedFishChangeEvent ev)
+   {
+      updateUi();
+   }
+
    private void updateUi()
    {
       Trip t = getSelectedTrip();
-      if(null == t)
-         return;
+      if(null != t)
+         updateTripLabel();
 
-      updateTripLabel();
+      // TODO - update all the controls from the selected fish
+      Fish f = getSelectedFish();
+      if(null == f)
+      {
+         // TODO -- clearControls()
+      }
+      else
+      {
+         // TODO -- updateControls()
+      }
    }
+
+   private Fish getSelectedFish() { return getTripManager().getSelectedFish(); }
 
    private Trip getSelectedTrip()
    {
@@ -69,6 +86,20 @@ public class FishDetailFragment
       Trip t = getSelectedTrip();
       if(null != t)
          getTitleView().setText(getTripManager().getDisplayableTripLabel(t));
+   }
+
+   private void initEditors()
+   {
+      // TODO - populate dropdowns, etc
+   }
+
+   private void initListeners()
+   {
+      getTripManager().addSelectedTripChangeListener(this);
+      getTripManager().addTripListChangeListener(this);
+      getTripManager().addSelectedFishChangeListener(this);
+
+      // TODO - add listeners for controls
    }
 
    private TextView getTitleView()

@@ -101,9 +101,11 @@ public class Trip
       return _fishCaught;
    }
 
-   public void newFish()
+   public Fish newFish()
    {
-      _fishCaught.add(new Fish());
+      Fish f = new Fish();
+      _fishCaught.add(f);
+      return f;
    }
 
    public void deleteFish(Fish f)
