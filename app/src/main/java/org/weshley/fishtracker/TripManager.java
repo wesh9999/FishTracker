@@ -11,21 +11,35 @@ import java.util.TreeSet;
 
 public class TripManager
 {
-   // TODO: Need to persist and load all trips, locations, and other state
+   // TODO: Need to persist and load all trips, locations, covers, species,
+   //       and other state
+
+   // TODO: add more default covers
+   private static final String[] DEFAULT_COVERS =
+      { "Trees", "Weeds", "Rocks",  "Clear Bottom", "Open Water" };
+
+   // TODO: add more default species
+   private static final String[] DEFAULT_SPECIES =
+      { "Largemouth Bass", "Spotted Bass", "Striped Bass", "Bluegill", "Crappie", "Blue Catfish",
+        "Channel Catfish" };
 
    private static final boolean INIT_TEST_DATA = true;
    private static TripManager _instance = null;
-   private Set<String> _allLocations = new TreeSet<String>();
+   private Set<String> _allLocations = new TreeSet<>();
+   private Set<String> _allSpecies = new TreeSet<>();
+   private Set<String> _allCovers = new TreeSet<>();
    private Trip _activeTrip = null;
       // _activeTrip is the trip that is open that caught fish, tracks, and other events
       // are attached to
    private Trip _selectedTrip = null;
       // _selectedTrip is the trip current being displayed in the Trip Detail tab.  often
       // the _activeTrip, but not always
-   private List<Trip> _trips = new ArrayList<Trip>();
-   private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<TripListChangeListener>();
-   private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<SelectedTripChangeListener>();
-   private Set<TripLocationsChangeListener> _tripLocationsChangeListeners = new HashSet<TripLocationsChangeListener>();
+   private List<Trip> _trips = new ArrayList<>();
+   private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<>();
+   private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<>();
+   private Set<TripLocationsChangeListener> _tripLocationsChangeListeners = new HashSet<>();
+   private Set<SpeciesChangeListener> _speciesChangeListeners = new HashSet<>();
+   private Set<CoverChangeListener> _coverChangeListeners = new HashSet<>();
    private Fish _selectedFish = null;
       // _selectedFish is the fish currently displayed in the Fish Detail tab, maybe after
       // selecting a fish in the Fish list tab or clicking on Caught Fish button
@@ -66,7 +80,7 @@ public class TripManager
                t.setLakeLevel((int) props[3]);
                t.setAirTemp(new Temperature((int) props[4]));
                t.setWaterTemp(new Temperature((int) props[5]));
-               t.setWindSpeed((int) props[6]);
+               t.setWindSpeed(new Speed((int) props[6]));
                t.setWindDirection(Trip.Direction.valueOf((String) props[7]));
                t.setWindStrength(Trip.WindStrength.valueOf((String) props[8]));
                t.setPrecipitation(Trip.Precipitation.valueOf((String) props[9]));
@@ -95,6 +109,16 @@ public class TripManager
            initTestData();
       }
       return _instance;
+   }
+
+   public void addSpeciesChangeListener(SpeciesChangeListener lsnr)
+   {
+      _speciesChangeListeners.add(lsnr);
+   }
+
+   public void addCoverChangeListener(CoverChangeListener lsnr)
+   {
+      _coverChangeListeners.add(lsnr);
    }
 
    public void addTripListChangeListener(TripListChangeListener listener)
@@ -265,6 +289,48 @@ public class TripManager
       return _allLocations;
    }
 
+   public void addSpecies(String species)
+   {
+      if((null != species) && !species.isEmpty() && !_allSpecies.contains(species))
+      {
+         _allSpecies.add(species);
+         fireSpeciesChanged(species);
+      }
+   }
+
+   public Set<String> getAllSpecies()
+   {
+      if((null == _allSpecies) || _allSpecies.isEmpty())
+      {
+         _allSpecies = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allSpecies
+         for(String s : DEFAULT_SPECIES)
+            _allSpecies.add(s);
+      }
+      return _allSpecies;
+   }
+
+   public void addCover(String cover)
+   {
+      if((null != cover) && !cover.isEmpty() && !_allCovers.contains(cover))
+      {
+         _allCovers.add(cover);
+         fireCoversChanged(cover);
+      }
+   }
+
+   public Set<String> getAllCovers()
+   {
+      if((null == _allCovers) || _allCovers.isEmpty())
+      {
+         _allCovers = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allCovers
+         for(String s : DEFAULT_COVERS)
+            _allCovers.add(s);
+      }
+      return _allCovers;
+   }
+
    public Trip.Direction[] getAllWindDirections()
    {
       return Trip.Direction.values();
@@ -317,6 +383,21 @@ public class TripManager
       TripLocationsChangeEvent ev = new TripLocationsChangeEvent(location);
       for(TripLocationsChangeListener lsnr : _tripLocationsChangeListeners)
          lsnr.tripLocationsChanged(ev);
+   }
+
+   void fireSpeciesChanged(String species)
+   {
+      SpeciesChangeEvent ev = new SpeciesChangeEvent(species);
+      for(SpeciesChangeListener lsnr : _speciesChangeListeners)
+         lsnr.speciesChanged(ev);
+
+   }
+
+   void fireCoversChanged(String cover)
+   {
+      CoverChangeEvent ev = new CoverChangeEvent(cover);
+      for(CoverChangeListener lsnr : _coverChangeListeners)
+         lsnr.coverChanged(ev);
 
    }
 

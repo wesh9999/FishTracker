@@ -10,7 +10,7 @@ public class Config
    private static final String DATE_FORMAT = "yyyy/MM/dd";
    private static final String TIME_FORMAT = "h:mm a";
 
-   public static final String OTHER_LOCATION_LABEL = "-- Other --";
+   public static final String OTHER_LABEL = "-- Other --";
 
    public static DateFormat getDateTimeFormat()
    {
@@ -28,4 +28,13 @@ public class Config
    }
 
    public static Temperature.Units getDefaultTempUnits() { return Temperature.Units.F; }
+
+   public static Speed.Units getDefaultWindSpeedUnits() { return Speed.Units.mph; }
+
+   public static WaterDepth.Units getDefaultWaterDepthUnits() { return WaterDepth.Units.ft; }
+
+   public static FishLength.Units getDefaultFishLengthUnits() { return FishLength.Units.in; }
+
+   public static FishWeight.Units getDefaultFishWeightUnits() { return FishWeight.Units.lbs; }
+
 }

@@ -29,7 +29,7 @@ public class Trip
       // TODO: when _trackTemp is turned on, need to start a thread that periodically stores
       //       a new temp in _tempProfile.  stop when trip stops or when turned off.
    private Temperature _waterTemp = null;
-   private Integer _windSpeed = null;
+   private Speed _windSpeed = null;
    private Direction _windDirection = null;
    private WindStrength _windStrength = null;
    private Precipitation _precip = null;
@@ -44,7 +44,7 @@ public class Trip
       _start = new Date();
       initPropertiesFromMostRecentTrip();
       initializeAirTempFromSensor();
-      _windSpeed = 0;
+      _windSpeed = null;
       _windDirection = null;
       _windStrength = null;
       _precip = null;
@@ -133,12 +133,12 @@ public class Trip
       _notes = s;
    }
 
-   public void setWindSpeed(int speed)
+   public void setWindSpeed(Speed speed)
    {
       _windSpeed = speed;
    }
 
-   public int getWindSpeed()
+   public Speed getWindSpeed()
    {
       return _windSpeed;
    }

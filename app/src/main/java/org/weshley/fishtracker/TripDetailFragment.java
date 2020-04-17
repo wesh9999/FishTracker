@@ -83,7 +83,7 @@ public class TripDetailFragment
    {
       Trip t = getSelectedTrip();
       if(null != t)
-         getTitleView().setText(getTripManager().getDisplayableTripLabel(t));
+         setTitle(getTripManager().getDisplayableTripLabel(t));
    }
 
    private void initListeners()
@@ -159,7 +159,7 @@ public class TripDetailFragment
          {
             String s = e.toString();
             if(s.length() > 0)
-               getSelectedTrip().setWindSpeed(Integer.parseInt(s));
+               getSelectedTrip().setWindSpeed(new Speed(Integer.decode(s)));
          }
 
          @Override
@@ -183,6 +183,22 @@ public class TripDetailFragment
 
          @Override
          public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      });
+
+      getAudioNoteControl().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent)
+         {
+            updateAudioNoteButtonState();
+         }
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            updateAudioNoteButtonState();
+         }
       });
 
       getAddAudioNoteButton().setOnClickListener(new View.OnClickListener()
@@ -219,16 +235,15 @@ public class TripDetailFragment
 
    private void enableControls(boolean enabled)
    {
-      getStartDateView().setEnabled(enabled);
-      getStartTimeView().setEnabled(enabled);
-      getEndDateView().setEnabled(enabled);
-      getEndTimeView().setEnabled(enabled);
+      getStartDateControl().setEnabled(enabled);
+      getStartTimeControl().setEnabled(enabled);
+      getEndDateControl().setEnabled(enabled);
+      getEndTimeControl().setEnabled(enabled);
       getLocationControl().setEnabled(enabled);
       getLakeLevelControl().setEnabled(enabled);
       getAirTempControl().setEnabled(enabled);
       getTrackingAirTempControl().setEnabled(enabled);
       getWaterTempControl().setEnabled(enabled);
-      getWaterTempUnitsLabel().setEnabled(enabled);
       getWindSpeedControl().setEnabled(enabled);
       getWindDirectionControl().setEnabled(enabled);
       getWindStrengthControl().setEnabled(enabled);
@@ -245,11 +260,9 @@ public class TripDetailFragment
       // TODO - need to test this
 
       enableControls(false);
-      getTitleView().setText("");
-      getStartDateView().setText("");
-      getStartTimeView().setText("");
-      getEndDateView().setText("");
-      getEndTimeView().setText("");
+      setTitle("");
+      setStart(null);
+      setEnd(null);
       setLocationSelection(null);
       setLakeLevel(null);
       setAirTemp(null);
@@ -260,19 +273,15 @@ public class TripDetailFragment
       setWindStrength(null);
       setPrecipitation(null);
       setNotes(null);
-
-      // TODO - clear audio notes list
+      clearAudioNotes();
    }
 
    private void updateControls(Trip t)
    {
       enableControls(true);
       updateTripLabel();
-      getStartDateView().setText(Config.getDateFormat().format(t.getStart()));
-      getStartTimeView().setText(Config.getTimeFormat().format(t.getStart()));
-
+      setStart(t.getStart());
       updateEndTripControls();
-
       setLocationSelection(t.getLocation());
       setLakeLevel(t.getLakeLevel());
       setAirTemp(t.getAirTemp());
@@ -283,6 +292,7 @@ public class TripDetailFragment
       setWindStrength(t.getWindStrength());
       setPrecipitation(t.getPrecipitation());
       setNotes(t.getNotes());
+      populateAudioNoteList(t);
    }
 
    private void updateEndTripControls()
@@ -292,26 +302,31 @@ public class TripDetailFragment
          return;
 
       boolean isActive = (getSelectedTrip() == getTripManager().getActiveTrip());
-      getEndDateView().setEnabled(!isActive);
-      getEndTimeView().setEnabled(!isActive);
+      getEndDateControl().setEnabled(!isActive);
+      getEndTimeControl().setEnabled(!isActive);
       if(isActive)
       {
-         getEndDateView().setText("< Active >");
-         getEndTimeView().setText("");
+         getEndDateControl().setText("< Active >");
+         getEndTimeControl().setText("");
       }
       else
       {
-         getEndDateView().setText(Config.getDateFormat().format(t.getEnd()));
-         getEndTimeView().setText(Config.getTimeFormat().format(t.getEnd()));
+         getEndDateControl().setText(Config.getDateFormat().format(t.getEnd()));
+         getEndTimeControl().setText(Config.getTimeFormat().format(t.getEnd()));
       }
    }
 
-   private void setWindSpeed(Integer speed)
+   private void setWindSpeed(Speed speed)
    {
-      String s = "";
+      String val = "";
+      String units = Config.getDefaultWindSpeedUnits().toString();
       if(null != speed)
-        s = speed.toString();
-      getWindSpeedControl().setText(s);
+      {
+         val =  "" + speed.getSpeed();
+         units = speed.getUnits().toString();
+      }
+      getWindSpeedControl().setText(val);
+      getWindSpeedUnitsLabel().setText(units);
    }
 
    private void setPrecipitation(Trip.Precipitation precip)
@@ -385,6 +400,40 @@ public class TripDetailFragment
       getWaterTempUnitsLabel().setText(units);
    }
 
+
+   private void setTitle(String t)
+   {
+      getTitleView().setText(t);
+   }
+
+   private void setStart(Date d)
+   {
+      if(null == d)
+      {
+         getStartDateControl().setText("");
+         getStartTimeControl().setText("");
+      }
+      else
+      {
+         getStartDateControl().setText(Config.getDateFormat().format(d));
+         getStartTimeControl().setText(Config.getTimeFormat().format(d));
+      }
+   }
+
+   private void setEnd(Date d)
+   {
+      if(null == d)
+      {
+         getEndDateControl().setText("");
+         getEndTimeControl().setText("");
+      }
+      else
+      {
+         getEndDateControl().setText(Config.getDateFormat().format(d));
+         getEndTimeControl().setText(Config.getTimeFormat().format(d));
+      }
+   }
+
    private void setLocationSelection(String loc)
    {
       if(null == loc)
@@ -422,7 +471,6 @@ public class TripDetailFragment
       initWindDirectionEditor();
       initWindStrengthEditor();
       initPrecipEditor();
-      initAudioNoteList();
    }
 
    private void initWindDirectionEditor()
@@ -497,33 +545,25 @@ public class TripDetailFragment
       });
    }
 
-   private void initAudioNoteList()
+   private void populateAudioNoteList(Trip t)
    {
       Spinner spinner = getAudioNoteControl();
       List<AudioNote> noteList = new ArrayList<>();
-      // Map<String, AudioNote> getAudioNotes
-      for(AudioNote note : getSelectedTrip().getAudioNotes().values())
+      for(AudioNote note : t.getAudioNotes().values())
          noteList.add(note);
       ArrayAdapter<AudioNote> spinnerArrayAdapter = new ArrayAdapter<>(
          this.getContext(), R.layout.spinner_item, noteList);
       spinner.setAdapter(spinnerArrayAdapter);
-      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-      {
-         @Override
-         public void onNothingSelected(AdapterView<?> parent)
-         {
-            updateAudioNoteButtonState();
-         }
-
-         @Override
-         public void onItemSelected(
-            AdapterView<?> parent, View view, int pos, long id)
-         {
-            updateAudioNoteButtonState();
-         }
-     });
-
      updateAudioNoteButtonState();
+   }
+
+   private void clearAudioNotes()
+   {
+      Spinner spinner = getAudioNoteControl();
+      ArrayAdapter<AudioNote> adapter = (ArrayAdapter<AudioNote>) spinner.getAdapter();
+      adapter.clear();
+      spinner.setSelection(-1);
+      updateAudioNoteButtonState();
    }
 
    private void updateAudioNoteButtonState()
@@ -537,7 +577,7 @@ public class TripDetailFragment
    {
       Spinner locationEditor = getLocationControl();
       List<String> locList = new ArrayList<>();
-      locList.add(Config.OTHER_LOCATION_LABEL);
+      locList.add(Config.OTHER_LABEL);
       for(String loc : getTripManager().getAllLocations())
          locList.add(loc);
       _locationMap = new HashMap<String,Integer>();
@@ -556,7 +596,7 @@ public class TripDetailFragment
             AdapterView<?> parent, View view, int pos, long id)
          {
             String loc = (String) parent.getItemAtPosition(pos);
-            if(Config.OTHER_LOCATION_LABEL.equals(loc))
+            if(Config.OTHER_LABEL.equals(loc))
             {
                final EditText input = new EditText(getContext());
                new AlertDialog.Builder(getContext())
@@ -583,7 +623,7 @@ public class TripDetailFragment
 
    private void initStartDateEditor()
    {
-      final TextView startView = getStartDateView();
+      final TextView startView = getStartDateControl();
 
       startView.setOnClickListener(new View.OnClickListener()
       {
@@ -622,7 +662,7 @@ public class TripDetailFragment
 
    private void initStartTimeEditor()
    {
-      final TextView startView = getStartTimeView();
+      final TextView startView = getStartTimeControl();
 
       startView.setOnClickListener(new View.OnClickListener()
       {
@@ -661,7 +701,7 @@ public class TripDetailFragment
 
    private void initEndDateEditor()
    {
-      final TextView endView = getEndDateView();
+      final TextView endView = getEndDateControl();
 
       endView.setOnClickListener(new View.OnClickListener()
       {
@@ -700,7 +740,7 @@ public class TripDetailFragment
 
    private void initEndTimeEditor()
    {
-      final TextView endView = getEndTimeView();
+      final TextView endView = getEndTimeControl();
 
       endView.setOnClickListener(new View.OnClickListener()
       {
@@ -817,22 +857,27 @@ public class TripDetailFragment
       return (EditText) _rootView.findViewById(R.id.detail_wind_speed_entry);
    }
 
-   private TextView getStartDateView()
+   private TextView getWindSpeedUnitsLabel()
+   {
+      return (TextView) _rootView.findViewById(R.id.detail_wind_speed_units);
+   }
+
+   private TextView getStartDateControl()
    {
       return (TextView) _rootView.findViewById(R.id.detail_start_date);
    }
 
-   private TextView getStartTimeView()
+   private TextView getStartTimeControl()
    {
       return (TextView) _rootView.findViewById(R.id.detail_start_time);
    }
 
-   private TextView getEndDateView()
+   private TextView getEndDateControl()
    {
       return (TextView) _rootView.findViewById(R.id.detail_end_date);
    }
 
-   private TextView getEndTimeView()
+   private TextView getEndTimeControl()
    {
       return (TextView) _rootView.findViewById(R.id.detail_end_time);
    }

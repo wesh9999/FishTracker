@@ -2,36 +2,26 @@ package org.weshley.fishtracker;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class Fish
 {
    public enum CaughtState { LANDED, HOOKED, HIT }
-
-   // TODO: add more default covers
-   private static final String[] DEFAULT_COVERS =
-      { "Trees", "Weeds", "Rocks",  "Clear Bottom", "Open Water" };
-
-   // TODO: add more default species
-   private static final String[] DEFAULT_SPECIES =
-      { "Largemouth Bass", "Spotted Bass", "Striped Bass", "Bluegill", "Crappie", "Blue Catfish",
-        "Channel Catfish" };
-
-   private static Set<String> _allSpecies = null;
-   private static Set<String> _allCovers = null;
 
    private CaughtState _caughtState = null;
    private Date _time = null;
    private LatLon _location = null;
    private Lure _lure = null;
    private String _species = null;
-   private int _length = -1;
-   private int _weight = -1;
+   private FishLength _length = null;
+   private FishWeight _weight = null;
    private Temperature _airTemp = null;
    private Temperature _waterTemp = null;
-   private int _waterDepth = -1;
+   private Speed _windSpeed = null;
+   private Trip.Direction _windDirection = null;
+   private Trip.WindStrength _windStrength = null;
+   private Trip.Precipitation _precip = null;
+   private WaterDepth _waterDepth = null;
    private String _cover = null;
    private Photo _picture = null;
    private String _notes = null;
@@ -44,10 +34,29 @@ public class Fish
       _location = new LatLon();
       _airTemp = getAirTempFromSensor();
       _waterTemp = getCurrentTripWaterTemp();
+      _windSpeed = null;
+      _windDirection = null;
+      _windStrength = null;
+      _precip = null;
+      _waterDepth = null;
       _notes = "";
       _audioNotes = new TreeMap<String,AudioNote>();
       initializeFromLastCaughtFish();
    }
+
+   public Date getCaughtTime()
+   {
+      return _time;
+   }
+
+   public void setCaughtTime(Date dt)
+   {
+      _time = dt;
+   }
+
+   public LatLon getLocation() { return _location; }
+
+   public void setLocation(LatLon location) { _location = location; }
 
    public void setNotes(String s)
    {
@@ -77,12 +86,52 @@ public class Fish
    public void setCover(String s)
    {
       _cover = s;
-      Fish.addToAllCovers(s);
+      getTripManager().addCover(s);
    }
 
    public String getCover()
    {
       return _cover;
+   }
+
+   public void setWindSpeed(Speed speed)
+   {
+      _windSpeed = speed;
+   }
+
+   public Speed getWindSpeed()
+   {
+      return _windSpeed;
+   }
+
+   public void setWindDirection(Trip.Direction dir)
+   {
+      _windDirection = dir;
+   }
+
+   public Trip.Direction getWindDirection()
+   {
+      return _windDirection;
+   }
+
+   public void setWindStrength(Trip.WindStrength str)
+   {
+      _windStrength = str;
+   }
+
+   public Trip.WindStrength getWindStrength()
+   {
+      return _windStrength;
+   }
+
+   public void setPrecipitation(Trip.Precipitation precip)
+   {
+      _precip = precip;
+   }
+
+   public Trip.Precipitation getPrecipitation()
+   {
+      return _precip;
    }
 
    public void setPicture(Photo p)
@@ -95,12 +144,12 @@ public class Fish
       return _picture;
    }
 
-   public void setWaterDepth(int depth)
+   public void setWaterDepth(WaterDepth depth)
    {
       _waterDepth = depth;
    }
 
-   private int getWaterDepth()
+   public WaterDepth getWaterDepth()
    {
       return _waterDepth;
    }
@@ -135,22 +184,22 @@ public class Fish
       _caughtState = s;
    }
 
-   public int getWeight()
+   public FishWeight getWeight()
    {
       return _weight;
    }
 
-   public void setWeight(int w)
+   public void setWeight(FishWeight w)
    {
       _weight = w;
    }
 
-   public int getLength()
+   public FishLength getLength()
    {
       return _length;
    }
 
-   public void setLength(int l)
+   public void setLength(FishLength l)
    {
       _length = l;
    }
@@ -163,7 +212,7 @@ public class Fish
    public void setSpecies(String s)
    {
       _species = s;
-      Fish.addToAllSpecies(s);
+      getTripManager().addSpecies(s);
    }
 
    public void setLure(Lure l)
@@ -174,6 +223,11 @@ public class Fish
    public Lure getLure()
    {
       return _lure;
+   }
+
+   private TripManager getTripManager()
+   {
+      return TripManager.instance();
    }
 
    private void initializeFromLastCaughtFish()
@@ -215,41 +269,4 @@ public class Fish
       return t.getMostRecentCaughtFish();
    }
 
-   private static Set<String> getAllSpecies()
-   {
-      if(null == _allSpecies)
-      {
-         _allSpecies = new TreeSet<String>();
-         // TODO:  read persisted list and add all values to _allSpecies
-         for(String s : DEFAULT_SPECIES)
-            _allSpecies.add(s);
-      }
-      return _allSpecies;
-   }
-
-   private static void addToAllSpecies(String s)
-   {
-      // TODO:  persist this list when modified
-      if((null != s) && !s.isEmpty())
-         getAllSpecies().add(s);
-   }
-
-   private static Set<String> getAllCovers()
-   {
-      if(null == _allCovers)
-      {
-         _allCovers = new TreeSet<String>();
-         // TODO:  read persisted list and add all values to _allCovers
-         for(String s : DEFAULT_COVERS)
-            _allCovers.add(s);
-      }
-      return _allCovers;
-   }
-
-   private static void addToAllCovers(String s)
-   {
-      // TODO:  persist this list when modified
-      if((null != s) && !s.isEmpty())
-         getAllCovers().add(s);
-   }
 }
