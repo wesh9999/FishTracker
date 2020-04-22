@@ -11,8 +11,8 @@ public class Fish
    private CaughtState _caughtState = null;
    private Date _time = null;
    private LatLon _location = null;
-   private Lure _lure = null;
-   private String _species = null;
+   private Lure _lure = new Lure();
+   private String _species = "Unknown";
    private FishLength _length = null;
    private FishWeight _weight = null;
    private Temperature _airTemp = null;
@@ -22,7 +22,7 @@ public class Fish
    private Trip.WindStrength _windStrength = null;
    private Trip.Precipitation _precip = null;
    private WaterDepth _waterDepth = null;
-   private String _cover = null;
+   private String _cover = "Unknown";
    private Photo _picture = null;
    private String _notes = null;
    private Map<String, AudioNote> _audioNotes = null;
@@ -218,11 +218,35 @@ public class Fish
    public void setLure(Lure l)
    {
       _lure = l;
+      getTripManager().addLureType(l.getType());
+      getTripManager().addLureColor(l.getColor());
+      getTripManager().addLureSize(l.getSize());
    }
 
    public Lure getLure()
    {
       return _lure;
+   }
+
+   public void setLureType(String type)
+   {
+      if(null == _lure)
+         _lure = new Lure();
+      _lure.setType(type);
+   }
+
+   public void setLureColor(String color)
+   {
+      if(null == _lure)
+         _lure = new Lure();
+      _lure.setColor(color);
+   }
+
+   public void setLureSize(String size)
+   {
+      if(null == _lure)
+         _lure = new Lure();
+      _lure.setSize(size);
    }
 
    private TripManager getTripManager()
@@ -235,10 +259,10 @@ public class Fish
       Fish f = getLastCaughtFish();
       if(null != f)
       {
-         _lure = f.getLure();
-         _species = f.getSpecies();
-         _waterDepth = f.getWaterDepth();
-         _cover = f.getCover();
+         setLure(f.getLure());
+         setSpecies(f.getSpecies());
+         setWaterDepth(f.getWaterDepth());
+         setCover(f.getCover());
       }
    }
 

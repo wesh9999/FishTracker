@@ -27,11 +27,15 @@ import java.util.List;
 public class FishDetailFragment
    extends AbstractFragment
    implements SelectedTripChangeListener, TripListChangeListener, SelectedFishChangeListener,
-              SpeciesChangeListener, CoverChangeListener
+              SpeciesChangeListener, CoverChangeListener, LureTypeChangeListener,
+              LureColorChangeListener, LureSizeChangeListener
 {
    private ViewGroup _rootView = null;
    private HashMap<String,Integer> _speciesMap;
    private HashMap<String,Integer> _coverMap;
+   private HashMap<String,Integer> _lureTypeMap;
+   private HashMap<String,Integer> _lureColorMap;
+   private HashMap<String,Integer> _lureSizeMap;
 
    public static String getLabel()
    {
@@ -80,6 +84,27 @@ public class FishDetailFragment
    }
 
    @Override
+   public void lureTypeChanged(LureTypeChangeEvent ev)
+   {
+      initLureTypeEditor();
+      setLureType(ev.getType());
+   }
+
+   @Override
+   public void lureColorChanged(LureColorChangeEvent ev)
+   {
+      initLureColorEditor();
+      setLureColor(ev.getColor());
+   }
+
+   @Override
+   public void lureSizeChanged(LureSizeChangeEvent ev)
+   {
+      initLureSizeEditor();
+      setLureSize(ev.getSize());
+   }
+
+   @Override
    public void coverChanged(CoverChangeEvent ev)
    {
       initCoverEditor();
@@ -107,8 +132,9 @@ public class FishDetailFragment
       getSpeciesControl().setEnabled(enabled);
       getLengthControl().setEnabled(enabled);
       getWeightControl().setEnabled(enabled);
-      getLureControl().setEnabled(enabled);
+      getLureTypeControl().setEnabled(enabled);
       getLureSizeControl().setEnabled(enabled);
+      getLureColorControl().setEnabled(enabled);
       getLandedControl().setEnabled(enabled);
       getAirTempControl().setEnabled(enabled);
       getWaterTempControl().setEnabled(enabled);
@@ -153,7 +179,7 @@ public class FishDetailFragment
    {
       enableControls(true);
       updateTripLabel();
-      setCaughtTime(null);
+      setCaughtTime(f.getCaughtTime());
       setSpecies(f.getSpecies());
       setLength(f.getLength());
       setWeight(f.getWeight());
@@ -198,13 +224,18 @@ public class FishDetailFragment
 
    private void initEditors()
    {
-      // TODO - populate dropdowns, etc
+      // TODO - working on this....populate dropdowns, etc
       initCaughtDateEditor();
       initCaughtTimeEditor();
       initSpeciesEditor();
+      initLureTypeEditor();
+      initLureSizeEditor();
+      initLureColorEditor();
+      initLandedEditor();
       initWindDirectionEditor();
       initWindStrengthEditor();
       initPrecipEditor();
+      initCoverEditor();
    }
 
    private void initCaughtDateEditor()
@@ -216,8 +247,13 @@ public class FishDetailFragment
          @Override
          public void onClick(View v)
          {
-             final Date dt = getSelectedFish().getCaughtTime();
              final Calendar cal = Calendar.getInstance();
+             Date dt = null;
+             final Fish f = getSelectedFish();
+             if(null == f)
+                dt = cal.getTime();
+             else
+                dt = f.getCaughtTime();
              cal.setTime(dt);
              int day = cal.get(Calendar.DAY_OF_MONTH);
              int month = cal.get(Calendar.MONTH);
@@ -236,7 +272,8 @@ public class FishDetailFragment
                       int seconds = cal.get(Calendar.SECOND);
                       cal.set(year, monthOfYear, dayOfMonth, hours, minutes, seconds);
                       Date newDt = cal.getTime();
-                      getSelectedFish().setCaughtTime(newDt);
+                      if(null != f)
+                         f.setCaughtTime(newDt);
                       updateUi();
                    }
                 },
@@ -255,8 +292,13 @@ public class FishDetailFragment
          @Override
          public void onClick(View v)
          {
-             final Date dt = getSelectedFish().getCaughtTime();
              final Calendar cal = Calendar.getInstance();
+             final Fish f = getSelectedFish();
+             Date dt = null;
+             if(null == f)
+                dt = cal.getTime();
+             else
+                dt = f.getCaughtTime();
              cal.setTime(dt);
              int hours = cal.get(Calendar.HOUR_OF_DAY);
              int minutes = cal.get(Calendar.MINUTE);
@@ -275,7 +317,8 @@ public class FishDetailFragment
                       int seconds = cal.get(Calendar.SECOND);
                       cal.set(year, month, day, hours, minutes, seconds);
                       Date newDt = cal.getTime();
-                      getSelectedFish().setCaughtTime(newDt);
+                      if(null != f)
+                         f.setCaughtTime(newDt);
                       updateUi();
                    }
                 },
@@ -320,17 +363,203 @@ public class FishDetailFragment
                      public void onClick(DialogInterface dialog, int whichButton)
                      {
                         String species = input.getText().toString();
-                        getSelectedFish().setSpecies(species);
+                        Fish f = getSelectedFish();
+                        if(null != f)
+                           f.setSpecies(species);
                      }
                   })
                .setNegativeButton(android.R.string.no, null).show();
             }
             else
             {
-               getSelectedFish().setSpecies(species);
+               Fish f = getSelectedFish();
+               if(null != f)
+                  f.setSpecies(species);
             }
          }
      });
+   }
+
+   private void initLureTypeEditor()
+   {
+      Spinner editor = getLureTypeControl();
+      List<String> list = new ArrayList<>();
+      list.add(Config.OTHER_LABEL);
+      for(String s : getTripManager().getAllLureTypes())
+         list.add(s);
+      _lureTypeMap = new HashMap<String,Integer>();
+      for(int i = 0; i < list.size(); ++i)
+         _lureTypeMap.put(list.get(i), i);
+      ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, list);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            final String type = (String) parent.getItemAtPosition(pos);
+            if(Config.OTHER_LABEL.equals(type))
+            {
+               final EditText input = new EditText(getContext());
+               new AlertDialog.Builder(getContext())
+                .setTitle("Enter New Lure Type")
+                .setView(input)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                  {
+                     public void onClick(DialogInterface dialog, int whichButton)
+                     {
+                        String type = input.getText().toString();
+                        Fish f = getSelectedFish();
+                        if(null != f)
+                           f.setLureType(type);
+                     }
+                  })
+               .setNegativeButton(android.R.string.no, null).show();
+            }
+            else
+            {
+               Fish f = getSelectedFish();
+               if(null != f)
+                  f.setLureType(type);
+            }
+         }
+     });
+   }
+
+   private void initLureSizeEditor()
+   {
+      Spinner editor = getLureSizeControl();
+      List<String> list = new ArrayList<>();
+      list.add(Config.OTHER_LABEL);
+      for(String s : getTripManager().getAllLureSizes())
+         list.add(s);
+      _lureSizeMap = new HashMap<String,Integer>();
+      for(int i = 0; i < list.size(); ++i)
+         _lureSizeMap.put(list.get(i), i);
+      ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, list);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            final String size = (String) parent.getItemAtPosition(pos);
+            if(Config.OTHER_LABEL.equals(size))
+            {
+               final EditText input = new EditText(getContext());
+               new AlertDialog.Builder(getContext())
+                .setTitle("Enter New Lure Size")
+                .setView(input)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                  {
+                     public void onClick(DialogInterface dialog, int whichButton)
+                     {
+                        String size = input.getText().toString();
+                        Fish f = getSelectedFish();
+                        if(null != f)
+                           f.setLureSize(size);
+                     }
+                  })
+               .setNegativeButton(android.R.string.no, null).show();
+            }
+            else
+            {
+               Fish f = getSelectedFish();
+               if(null != f)
+                  f.setLureSize(size);
+            }
+         }
+     });
+   }
+
+   private void initLureColorEditor()
+   {
+      Spinner editor = getLureColorControl();
+      List<String> list = new ArrayList<>();
+      list.add(Config.OTHER_LABEL);
+      for(String s : getTripManager().getAllLureColors())
+         list.add(s);
+      _lureColorMap = new HashMap<String,Integer>();
+      for(int i = 0; i < list.size(); ++i)
+         _lureColorMap.put(list.get(i), i);
+      ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, list);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+            AdapterView<?> parent, View view, int pos, long id)
+         {
+            final String color = (String) parent.getItemAtPosition(pos);
+            if(Config.OTHER_LABEL.equals(color))
+            {
+               final EditText input = new EditText(getContext());
+               new AlertDialog.Builder(getContext())
+                .setTitle("Enter New Lure Color")
+                .setView(input)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                  {
+                     public void onClick(DialogInterface dialog, int whichButton)
+                     {
+                        String color = input.getText().toString();
+                        Fish f = getSelectedFish();
+                        if(null != f)
+                           f.setLureColor(color);
+                     }
+                  })
+               .setNegativeButton(android.R.string.no, null).show();
+            }
+            else
+            {
+               Fish f = getSelectedFish();
+               if(null != f)
+                  f.setLureColor(color);
+            }
+         }
+     });
+   }
+
+   private void initLandedEditor()
+   {
+      Spinner editor = getWindDirectionControl();
+      List<Fish.CaughtState> itemList = new ArrayList<>();
+      for(Fish.CaughtState s : getTripManager().getAllCaughtStates())
+         itemList.add(s);
+      ArrayAdapter<Fish.CaughtState> spinnerArrayAdapter = new ArrayAdapter<>(
+         this.getContext(), R.layout.spinner_item, itemList);
+      editor.setAdapter(spinnerArrayAdapter);
+      editor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+
+         @Override
+         public void onItemSelected(
+           AdapterView<?> parent, View view, int pos, long id)
+         {
+            Fish.CaughtState s = (Fish.CaughtState) parent.getItemAtPosition(pos);
+            Fish f = getSelectedFish();
+            if(null != f)
+               f.setCaughtState(s);
+         }
+      });
    }
 
    private void initWindDirectionEditor()
@@ -352,7 +581,9 @@ public class FishDetailFragment
            AdapterView<?> parent, View view, int pos, long id)
          {
             Trip.Direction dir = (Trip.Direction) parent.getItemAtPosition(pos);
-            getSelectedFish().setWindDirection(dir);
+            Fish f = getSelectedFish();
+            if(null != f)
+               f.setWindDirection(dir);
          }
       });
    }
@@ -376,7 +607,9 @@ public class FishDetailFragment
            AdapterView<?> parent, View view, int pos, long id)
          {
             Trip.WindStrength str = (Trip.WindStrength) parent.getItemAtPosition(pos);
-            getSelectedFish().setWindStrength(str);
+            Fish f = getSelectedFish();
+            if(null != f)
+               f.setWindStrength(str);
          }
       });
    }
@@ -400,7 +633,9 @@ public class FishDetailFragment
            AdapterView<?> parent, View view, int pos, long id)
          {
             Trip.Precipitation precip = (Trip.Precipitation) parent.getItemAtPosition(pos);
-            getSelectedFish().setPrecipitation(precip);
+            Fish f = getSelectedFish();
+            if(null != f)
+               f.setPrecipitation(precip);
          }
       });
    }
@@ -440,14 +675,18 @@ public class FishDetailFragment
                      public void onClick(DialogInterface dialog, int whichButton)
                      {
                         String species = input.getText().toString();
-                        getSelectedFish().setCover(cover);
+                        Fish f = getSelectedFish();
+                        if(null != f)
+                           f.setCover(cover);
                      }
                   })
                .setNegativeButton(android.R.string.no, null).show();
             }
             else
             {
-               getSelectedFish().setCover(cover);
+               Fish f = getSelectedFish();
+               if(null != f)
+                  f.setCover(cover);
             }
          }
      });
@@ -461,6 +700,9 @@ public class FishDetailFragment
       getTripManager().addSelectedFishChangeListener(this);
       getTripManager().addSpeciesChangeListener(this);
       getTripManager().addCoverChangeListener(this);
+      getTripManager().addLureTypeChangeListener(this);
+      getTripManager().addLureColorChangeListener(this);
+      getTripManager().addLureSizeChangeListener(this);
 
       // TODO - add listeners for controls
    }
@@ -565,7 +807,18 @@ public class FishDetailFragment
 
    private void setLure(Lure lure)
    {
-      // TODO - to be implemented
+      if(null == lure)
+      {
+         setLureType(null);
+         setLureColor(null);
+         setLureSize(null);
+      }
+      else
+      {
+         setLureType(lure.getType());
+         setLureColor(lure.getColor());
+         setLureSize(lure.getSize());
+      }
    }
 
    private void setGpsLocation(LatLon loc)
@@ -626,6 +879,90 @@ public class FishDetailFragment
       }
    }
 
+   private void setLureType(String type)
+   {
+      if(null == type)
+         type = "Unknown";
+/*
+      if(null == type)
+      {
+         getLureTypeControl().setSelection(-1);
+      }
+      else
+      {
+ */
+         if(_lureTypeMap.containsKey(type))
+         {
+            int pos = _lureTypeMap.get(type);
+            getLureTypeControl().setSelection(pos);
+         }
+         else
+         {
+            getTripManager().addLureType(type);
+               // event handling will trigger update of _lureTypeMap and
+               // set the spinner selection
+         }
+/*
+      }
+ */
+   }
+
+   private void setLureColor(String color)
+   {
+      if(null == color)
+         color = "Unknown";
+/*
+      if(null == color)
+      {
+         getLureColorControl().setSelection(-1);
+      }
+      else
+      {
+ */
+         if(_lureColorMap.containsKey(color))
+         {
+            int pos = _lureColorMap.get(color);
+            getLureColorControl().setSelection(pos);
+         }
+         else
+         {
+            getTripManager().addLureColor(color);
+               // event handling will trigger update of _lureColorMap and
+               // set the spinner selection
+         }
+/*
+      }
+ */
+   }
+
+   private void setLureSize(String size)
+   {
+      if(null == size)
+         size = "Unknown";
+/*
+      if(null == size)
+      {
+         getLureSizeControl().setSelection(-1);
+      }
+      else
+      {
+ */
+         if(_lureSizeMap.containsKey(size))
+         {
+            int pos = _lureSizeMap.get(size);
+            getLureSizeControl().setSelection(pos);
+         }
+         else
+         {
+            getTripManager().addLureSize(size);
+               // event handling will trigger update of _lureSizeMap and
+               // set the spinner selection
+         }
+/*
+      }
+ */
+   }
+
    private void setCover(String cover)
    {
       if(null == cover)
@@ -664,7 +1001,8 @@ public class FishDetailFragment
    {
       Spinner spinner = getAudioNoteControl();
       ArrayAdapter<AudioNote> adapter = (ArrayAdapter<AudioNote>) spinner.getAdapter();
-      adapter.clear();
+      if(null != adapter)
+         adapter.clear();
       spinner.setSelection(-1);
       updateAudioNoteButtonState();
    }
@@ -747,6 +1085,21 @@ public class FishDetailFragment
       return (Spinner) _rootView.findViewById(R.id.fish_detail_species_spinner);
    }
 
+   private Spinner getLureTypeControl()
+   {
+      return (Spinner) _rootView.findViewById(R.id.fish_detail_lure_spinner);
+   }
+
+   private Spinner getLureSizeControl()
+   {
+      return (Spinner) _rootView.findViewById(R.id.fish_detail_lure_size_spinner);
+   }
+
+   private Spinner getLureColorControl()
+   {
+      return (Spinner) _rootView.findViewById(R.id.fish_detail_lure_color_spinner);
+   }
+
    private Spinner getAudioNoteControl()
    {
       return (Spinner) _rootView.findViewById(R.id.fish_detail_audio_notes_list);
@@ -805,16 +1158,6 @@ public class FishDetailFragment
    private TextView getWeightUnitsLabel()
    {
       return (TextView) _rootView.findViewById(R.id.fish_detail_weight_units);
-   }
-
-   private Spinner getLureControl()
-   {
-      return (Spinner) _rootView.findViewById(R.id.fish_detail_lure_spinner);
-   }
-
-   private Spinner getLureSizeControl()
-   {
-      return (Spinner) _rootView.findViewById(R.id.fish_detail_lure_size_spinner);
    }
 
    private Spinner getLandedControl()

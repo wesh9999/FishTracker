@@ -20,14 +20,26 @@ public class TripManager
 
    // TODO: add more default species
    private static final String[] DEFAULT_SPECIES =
-      { "Largemouth Bass", "Spotted Bass", "Striped Bass", "Bluegill", "Crappie", "Blue Catfish",
-        "Channel Catfish" };
+      { "Largemouth Bass", "Spotted Bass", "Striped Bass", "Bluegill", "Crappie",
+        "Blue Catfish", "Channel Catfish" };
+
+   // TODO: add more default lure types, colors, sizes
+   private static final String[] DEFAULT_LURE_TYPES =
+      { "Tube", "Rip Stop" };
+   private static final String[] DEFAULT_LURE_COLORS =
+      { "Black/White", "Blue/Orange", "Shad" };
+   private static final String[] DEFAULT_LURE_SIZES =
+      { "3in", "4in" };
 
    private static final boolean INIT_TEST_DATA = true;
    private static TripManager _instance = null;
    private Set<String> _allLocations = new TreeSet<>();
    private Set<String> _allSpecies = new TreeSet<>();
    private Set<String> _allCovers = new TreeSet<>();
+   private Set<String> _allLureTypes = new TreeSet<>();
+   private Set<String> _allLureColors = new TreeSet<>();
+   private Set<String> _allLureSizes = new TreeSet<>();
+
    private Trip _activeTrip = null;
       // _activeTrip is the trip that is open that caught fish, tracks, and other events
       // are attached to
@@ -38,6 +50,9 @@ public class TripManager
    private Set<TripListChangeListener> _tripListChangeListeners = new HashSet<>();
    private Set<SelectedTripChangeListener> _selectedTripChangeListeners = new HashSet<>();
    private Set<TripLocationsChangeListener> _tripLocationsChangeListeners = new HashSet<>();
+   private Set<LureTypeChangeListener> _lureTypeChangeListeners = new HashSet<>();
+   private Set<LureColorChangeListener> _lureColorChangeListeners = new HashSet<>();
+   private Set<LureSizeChangeListener> _lureSizeChangeListeners = new HashSet<>();
    private Set<SpeciesChangeListener> _speciesChangeListeners = new HashSet<>();
    private Set<CoverChangeListener> _coverChangeListeners = new HashSet<>();
    private Fish _selectedFish = null;
@@ -114,6 +129,21 @@ public class TripManager
    public void addSpeciesChangeListener(SpeciesChangeListener lsnr)
    {
       _speciesChangeListeners.add(lsnr);
+   }
+
+   public void addLureTypeChangeListener(LureTypeChangeListener lsnr)
+   {
+      _lureTypeChangeListeners.add(lsnr);
+   }
+
+   public void addLureColorChangeListener(LureColorChangeListener lsnr)
+   {
+      _lureColorChangeListeners.add(lsnr);
+   }
+
+   public void addLureSizeChangeListener(LureSizeChangeListener lsnr)
+   {
+      _lureSizeChangeListeners.add(lsnr);
    }
 
    public void addCoverChangeListener(CoverChangeListener lsnr)
@@ -310,6 +340,69 @@ public class TripManager
       return _allSpecies;
    }
 
+   public void addLureType(String type)
+   {
+      if((null != type) && !type.isEmpty() && !_allLureTypes.contains(type))
+      {
+         _allLureTypes.add(type);
+         fireLureTypesChanged(type);
+      }
+   }
+
+   public Set<String> getAllLureTypes()
+   {
+      if((null == _allLureTypes) || _allLureTypes.isEmpty())
+      {
+         _allLureTypes = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allLureTypes
+         for(String s : DEFAULT_LURE_TYPES)
+            _allLureTypes.add(s);
+      }
+      return _allLureTypes;
+   }
+
+   public void addLureColor(String color)
+   {
+      if((null != color) && !color.isEmpty() && !_allLureColors.contains(color))
+      {
+         _allLureColors.add(color);
+         fireLureColorsChanged(color);
+      }
+   }
+
+   public Set<String> getAllLureColors()
+   {
+      if((null == _allLureColors) || _allLureColors.isEmpty())
+      {
+         _allLureColors = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allLureColors
+         for(String s : DEFAULT_LURE_COLORS)
+            _allLureColors.add(s);
+      }
+      return _allLureColors;
+   }
+
+   public void addLureSize(String s)
+   {
+      if((null != s) && !s.isEmpty() && !_allLureSizes.contains(s))
+      {
+         _allLureSizes.add(s);
+         fireLureSizesChanged(s);
+      }
+   }
+
+   public Set<String> getAllLureSizes()
+   {
+      if((null == _allLureSizes) || _allLureSizes.isEmpty())
+      {
+         _allLureSizes = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allLureSizes
+         for(String s : DEFAULT_LURE_SIZES)
+            _allLureSizes.add(s);
+      }
+      return _allLureSizes;
+   }
+
    public void addCover(String cover)
    {
       if((null != cover) && !cover.isEmpty() && !_allCovers.contains(cover))
@@ -344,6 +437,11 @@ public class TripManager
    public Trip.Precipitation[] getAllPrecipitations()
    {
       return Trip.Precipitation.values();
+   }
+
+   public Fish.CaughtState[] getAllCaughtStates()
+   {
+      return Fish.CaughtState.values();
    }
 
    private TripManager()
@@ -390,7 +488,27 @@ public class TripManager
       SpeciesChangeEvent ev = new SpeciesChangeEvent(species);
       for(SpeciesChangeListener lsnr : _speciesChangeListeners)
          lsnr.speciesChanged(ev);
+   }
 
+   void fireLureTypesChanged(String type)
+   {
+      LureTypeChangeEvent ev = new LureTypeChangeEvent(type);
+      for(LureTypeChangeListener lsnr : _lureTypeChangeListeners)
+         lsnr.lureTypeChanged(ev);
+   }
+
+   void fireLureColorsChanged(String color)
+   {
+      LureColorChangeEvent ev = new LureColorChangeEvent(color);
+      for(LureColorChangeListener lsnr : _lureColorChangeListeners)
+         lsnr.lureColorChanged(ev);
+   }
+
+   void fireLureSizesChanged(String size)
+   {
+      LureSizeChangeEvent ev = new LureSizeChangeEvent(size);
+      for(LureSizeChangeListener lsnr : _lureSizeChangeListeners)
+         lsnr.lureSizeChanged(ev);
    }
 
    void fireCoversChanged(String cover)

@@ -437,11 +437,15 @@ public class TripDetailFragment
    private void setLocationSelection(String loc)
    {
       if(null == loc)
+         loc = "Unknown";
+/*
+      if(null == loc)
       {
          getLocationControl().setSelection(-1);
       }
       else
       {
+ */
          if(_locationMap.containsKey(loc))
          {
             int pos = _locationMap.get(loc);
@@ -453,7 +457,9 @@ public class TripDetailFragment
                // event handling will trigger update of _locationMap and
                // set the spinner selection
          }
+/*
       }
+ */
    }
 
    private Trip getSelectedTrip()
