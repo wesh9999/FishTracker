@@ -6,13 +6,16 @@ import java.util.TreeMap;
 
 public class Fish
 {
-   public enum CaughtState { LANDED, HOOKED, HIT }
+   public enum CaughtState
+   { UNDEFINED { public String toString() { return Config.BLANK_LABEL; }},
+     Landed, Hooked, Hit
+   }
 
-   private CaughtState _caughtState = null;
+   private CaughtState _caughtState = CaughtState.UNDEFINED;
    private Date _time = null;
    private LatLon _location = null;
    private Lure _lure = new Lure();
-   private String _species = "Unknown";
+   private String _species = null;
    private FishLength _length = null;
    private FishWeight _weight = null;
    private Temperature _airTemp = null;
@@ -22,14 +25,14 @@ public class Fish
    private Trip.WindStrength _windStrength = null;
    private Trip.Precipitation _precip = null;
    private WaterDepth _waterDepth = null;
-   private String _cover = "Unknown";
+   private String _cover = null;
    private Photo _picture = null;
    private String _notes = null;
    private Map<String, AudioNote> _audioNotes = null;
 
    public Fish()
    {
-      _caughtState = CaughtState.LANDED;
+      _caughtState = CaughtState.Landed;
       _time = new Date();
       _location = new LatLon();
       _airTemp = getAirTempFromSensor();
@@ -85,8 +88,15 @@ public class Fish
 
    public void setCover(String s)
    {
-      _cover = s;
-      getTripManager().addCover(s);
+      if((null == s) || s.isEmpty())
+      {
+         _cover = null;
+      }
+      else
+      {
+         _cover = s;
+         getTripManager().addCover(s);
+      }
    }
 
    public String getCover()
@@ -211,8 +221,15 @@ public class Fish
 
    public void setSpecies(String s)
    {
-      _species = s;
-      getTripManager().addSpecies(s);
+      if((s == null) || s.isEmpty())
+      {
+         _species = null;
+      }
+      else
+      {
+         _species = s;
+         getTripManager().addSpecies(s);
+      }
    }
 
    public void setLure(Lure l)

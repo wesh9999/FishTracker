@@ -5,9 +5,9 @@ import java.util.TreeSet;
 
 public class Lure
 {
-   private String _type = "Unknown";
-   private String _color = "Unknown";
-   private String _size = "Unknown";
+   private String _type = null;
+   private String _color = null;
+   private String _size = null;
 
    public Lure()
    {
@@ -22,8 +22,15 @@ public class Lure
 
    public void setType(String s)
    {
-      _type = s;
-      getTripManager().addLureType(s);
+      if((null == s) || s.isEmpty())
+      {
+         _type = null;
+      }
+      else
+      {
+         _type = s;
+         getTripManager().addLureType(s);
+      }
    }
 
    public String getType()
@@ -33,8 +40,15 @@ public class Lure
 
    public void setColor(String s)
    {
-      _color = s;
-      getTripManager().addLureColor(s);
+      if((null == s) || s.isEmpty())
+      {
+         _type = null;
+      }
+      else
+      {
+         _color = s;
+         getTripManager().addLureColor(s);
+      }
    }
 
    public String getColor()
@@ -44,8 +58,15 @@ public class Lure
 
    public void setSize(String s)
    {
-      _size = s;
-      getTripManager().addLureSize(s);
+      if((null == s) || s.isEmpty())
+      {
+         _type = null;
+      }
+      else
+      {
+         _size = s;
+         getTripManager().addLureSize(s);
+      }
    }
 
    public String getSize()

@@ -12,6 +12,9 @@ public class Config
 
    public static final String OTHER_LABEL = "-- Other --";
 
+   public static final String BLANK_LABEL = "";
+     // used in spinners as a "no selection" entry
+
    public static DateFormat getDateTimeFormat()
    {
       return new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT);

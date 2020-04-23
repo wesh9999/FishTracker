@@ -97,7 +97,9 @@ public class TripDetailFragment
          @Override
          public void onCheckedChanged(CompoundButton compoundButton, boolean b)
          {
-            getSelectedTrip().setTrackingLocation(b);
+            Trip t = getSelectedTrip();
+            if(null != t)
+               t.setTrackingLocation(b);
          }
       });
 
@@ -106,9 +108,13 @@ public class TripDetailFragment
          @Override
          public void afterTextChanged(Editable e)
          {
-            String s = e.toString();
-            if(s.length() > 0)
-              getSelectedTrip().setLakeLevel(Integer.parseInt(s));
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               String s = e.toString();
+               if(s.length() > 0)
+                 t.setLakeLevel(Integer.parseInt(s));
+            }
          }
 
          @Override
@@ -123,9 +129,13 @@ public class TripDetailFragment
          @Override
          public void afterTextChanged(Editable e)
          {
-            String s = e.toString();
-            if(s.length() > 0)
-               getSelectedTrip().setAirTemp(new Temperature(Integer.parseInt(s)));
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               String s = e.toString();
+               if(s.length() > 0)
+                  t.setAirTemp(new Temperature(Integer.parseInt(s)));
+            }
          }
 
          @Override
@@ -140,9 +150,13 @@ public class TripDetailFragment
          @Override
          public void afterTextChanged(Editable e)
          {
-            String s = e.toString();
-            if(s.length() > 0)
-               getSelectedTrip().setWaterTemp(new Temperature(Integer.parseInt(s)));
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               String s = e.toString();
+               if(s.length() > 0)
+                  t.setWaterTemp(new Temperature(Integer.parseInt(s)));
+            }
          }
 
          @Override
@@ -157,9 +171,13 @@ public class TripDetailFragment
          @Override
          public void afterTextChanged(Editable e)
          {
-            String s = e.toString();
-            if(s.length() > 0)
-               getSelectedTrip().setWindSpeed(new Speed(Integer.decode(s)));
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               String s = e.toString();
+               if(s.length() > 0)
+                  t.setWindSpeed(new Speed(Integer.decode(s)));
+            }
          }
 
          @Override
@@ -174,8 +192,12 @@ public class TripDetailFragment
          @Override
          public void afterTextChanged(Editable e)
          {
-            String s = e.toString();
-            getSelectedTrip().setNotes(s);
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               String s = e.toString();
+               t.setNotes(s);
+            }
          }
 
          @Override
@@ -437,15 +459,12 @@ public class TripDetailFragment
    private void setLocationSelection(String loc)
    {
       if(null == loc)
-         loc = "Unknown";
-/*
-      if(null == loc)
       {
-         getLocationControl().setSelection(-1);
+         getLocationControl().setSelection(0);
+           // NOTE:  0 is the blank "no-selection" element
       }
       else
       {
- */
          if(_locationMap.containsKey(loc))
          {
             int pos = _locationMap.get(loc);
@@ -457,9 +476,7 @@ public class TripDetailFragment
                // event handling will trigger update of _locationMap and
                // set the spinner selection
          }
-/*
       }
- */
    }
 
    private Trip getSelectedTrip()
@@ -497,8 +514,12 @@ public class TripDetailFragment
          public void onItemSelected(
            AdapterView<?> parent, View view, int pos, long id)
          {
-            Trip.Direction dir = (Trip.Direction) parent.getItemAtPosition(pos);
-            getSelectedTrip().setWindDirection(dir);
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               Trip.Direction dir = (Trip.Direction) parent.getItemAtPosition(pos);
+               t.setWindDirection(dir);
+            }
          }
       });
    }
@@ -521,8 +542,12 @@ public class TripDetailFragment
          public void onItemSelected(
            AdapterView<?> parent, View view, int pos, long id)
          {
-            Trip.WindStrength str = (Trip.WindStrength) parent.getItemAtPosition(pos);
-            getSelectedTrip().setWindStrength(str);
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               Trip.WindStrength str = (Trip.WindStrength) parent.getItemAtPosition(pos);
+               getSelectedTrip().setWindStrength(str);
+            }
          }
       });
    }
@@ -545,8 +570,12 @@ public class TripDetailFragment
          public void onItemSelected(
            AdapterView<?> parent, View view, int pos, long id)
          {
-            Trip.Precipitation precip = (Trip.Precipitation) parent.getItemAtPosition(pos);
-            getSelectedTrip().setPrecipitation(precip);
+            Trip t = getSelectedTrip();
+            if(null != t)
+            {
+               Trip.Precipitation precip = (Trip.Precipitation) parent.getItemAtPosition(pos);
+               t.setPrecipitation(precip);
+            }
          }
       });
    }
@@ -567,8 +596,9 @@ public class TripDetailFragment
    {
       Spinner spinner = getAudioNoteControl();
       ArrayAdapter<AudioNote> adapter = (ArrayAdapter<AudioNote>) spinner.getAdapter();
-      adapter.clear();
-      spinner.setSelection(-1);
+      if(null != adapter)
+         adapter.clear();
+      spinner.setSelection(0);
       updateAudioNoteButtonState();
    }
 
@@ -583,6 +613,7 @@ public class TripDetailFragment
    {
       Spinner locationEditor = getLocationControl();
       List<String> locList = new ArrayList<>();
+      locList.add(Config.BLANK_LABEL);
       locList.add(Config.OTHER_LABEL);
       for(String loc : getTripManager().getAllLocations())
          locList.add(loc);
@@ -601,6 +632,10 @@ public class TripDetailFragment
          public void onItemSelected(
             AdapterView<?> parent, View view, int pos, long id)
          {
+            final Trip t = getSelectedTrip();
+            if(null == t)
+              return;
+
             String loc = (String) parent.getItemAtPosition(pos);
             if(Config.OTHER_LABEL.equals(loc))
             {
@@ -614,14 +649,14 @@ public class TripDetailFragment
                      public void onClick(DialogInterface dialog, int whichButton)
                      {
                         String loc = input.getText().toString();
-                        getSelectedTrip().setLocation(loc);
+                        t.setLocation(loc);
                      }
                   })
                .setNegativeButton(android.R.string.no, null).show();
             }
             else
             {
-               getSelectedTrip().setLocation(loc);
+               t.setLocation(loc);
             }
          }
      });

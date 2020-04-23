@@ -49,4 +49,5 @@
     <string name="fish_detail_precip_label">Precipitation:</string>
     <string name="fish_detail_gps_loc_label">GPS:</string>
     <string name="fish_detail_cover_label">Cover:</string>
+    <string name="fish_detail_lure_color_label">Color:</string>
 </resources>

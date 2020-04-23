@@ -14,6 +14,11 @@ public class TripManager
    // TODO: Need to persist and load all trips, locations, covers, species,
    //       and other state
 
+   private static final boolean INIT_TEST_DATA = true;
+
+   private static final String[] DEFAULT_LOCATIONS =
+      { "Lake Hartwell", "Oliver Lake" };
+
    // TODO: add more default covers
    private static final String[] DEFAULT_COVERS =
       { "Trees", "Weeds", "Rocks",  "Clear Bottom", "Open Water" };
@@ -29,9 +34,8 @@ public class TripManager
    private static final String[] DEFAULT_LURE_COLORS =
       { "Black/White", "Blue/Orange", "Shad" };
    private static final String[] DEFAULT_LURE_SIZES =
-      { "3in", "4in" };
+      { "3\"", "4\"" };
 
-   private static final boolean INIT_TEST_DATA = true;
    private static TripManager _instance = null;
    private Set<String> _allLocations = new TreeSet<>();
    private Set<String> _allSpecies = new TreeSet<>();
@@ -106,7 +110,7 @@ public class TripManager
             }
             catch(Exception ex)
             {
-               Logger.error("Unexpeced error generating demo data", ex);
+               Logger.error("Unexpected error generating demo data", ex);
                ex.printStackTrace();
             }
          }
@@ -119,7 +123,6 @@ public class TripManager
       if(null == _instance)
       {
          _instance = new TripManager();
-         _instance.initAllLocations();
          if(INIT_TEST_DATA)
            initTestData();
       }
@@ -316,6 +319,13 @@ public class TripManager
 
    public Set<String> getAllLocations()
    {
+      if((null == _allLocations) || _allLocations.isEmpty())
+      {
+         _allLocations = new TreeSet<String>();
+         // TODO:  read persisted list and add all values to _allLocations
+         for(String s : DEFAULT_LOCATIONS)
+            _allLocations.add(s);
+      }
       return _allLocations;
    }
 
@@ -446,13 +456,6 @@ public class TripManager
 
    private TripManager()
    {
-   }
-
-   private void initAllLocations()
-   {
-      // TODO: this should be reading from some persistent storage, but for now....
-      _allLocations.add("Lake Hartwell");
-      _allLocations.add("Oliver Lake");
    }
 
    void fireTripListChanged(Trip t)

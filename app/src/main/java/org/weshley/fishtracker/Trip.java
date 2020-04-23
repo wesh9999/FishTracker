@@ -9,11 +9,19 @@ import java.util.TreeMap;
 public class Trip
 {
    public enum Direction
-      {Variable, N, NE, E, SE, S, SW, W, NW}
+   { UNDEFINED { public String toString() { return Config.BLANK_LABEL; }},
+     Variable, N, NE, E, SE, S, SW, W, NW
+   }
+
    public enum WindStrength
-      {Intermittent, Steady, Growing, Waning}
+   { UNDEFINED { public String toString() { return Config.BLANK_LABEL; }},
+     Intermittent, Steady, Growing, Waning
+   }
+
    public enum Precipitation
-      {Clear, PartlyCloudy, MostlyCloudy, SolidClouds, LightRain, HeavyRain}
+   { UNDEFINED { public String toString() { return Config.BLANK_LABEL; }},
+     Clear, PartlyCloudy, MostlyCloudy, SolidClouds, LightRain, HeavyRain
+   }
 
    private Date _start = null;
    private Date _end = null;
@@ -30,9 +38,9 @@ public class Trip
       //       a new temp in _tempProfile.  stop when trip stops or when turned off.
    private Temperature _waterTemp = null;
    private Speed _windSpeed = null;
-   private Direction _windDirection = null;
-   private WindStrength _windStrength = null;
-   private Precipitation _precip = null;
+   private Direction _windDirection = Direction.UNDEFINED;
+   private WindStrength _windStrength = WindStrength.UNDEFINED;
+   private Precipitation _precip = Precipitation.UNDEFINED;
    private String _notes = null;
    private Map<String, AudioNote> _audioNotes = null;
    private List<Fish> _fishCaught = null;
