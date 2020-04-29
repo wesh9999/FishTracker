@@ -34,17 +34,23 @@ public class Fish
    {
       _caughtState = CaughtState.Landed;
       _time = new Date();
-      _location = new LatLon();
-      _airTemp = getAirTempFromSensor();
-      _waterTemp = getCurrentTripWaterTemp();
-      _windSpeed = null;
-      _windDirection = null;
-      _windStrength = null;
-      _precip = null;
-      _waterDepth = null;
+      _location = getLatLonFromSensor();
+      _airTemp = getMostRecentAirTemp();
+      _waterTemp = getMostRecentWaterTemp();
+      setMostRecentWindData();
+      _precip = getMostRecentPrecipitation();
       _notes = "";
       _audioNotes = new TreeMap<String,AudioNote>();
-      initializeFromLastCaughtFish();
+
+      // initialize some data from last caught fish
+      Fish f = getLastCaughtFish();
+      if(null != f)
+      {
+         setLure(f.getLure());
+         setSpecies(f.getSpecies());
+         setWaterDepth(f.getWaterDepth());
+         setCover(f.getCover());
+      }
    }
 
    public Date getCaughtTime()
@@ -271,40 +277,91 @@ public class Fish
       return TripManager.instance();
    }
 
-   private void initializeFromLastCaughtFish()
+   private void setMostRecentWindData()
    {
+      // set wind speed, direction and strength from most recent
+      // caught fish or trip data
       Fish f = getLastCaughtFish();
       if(null != f)
       {
-         setLure(f.getLure());
-         setSpecies(f.getSpecies());
-         setWaterDepth(f.getWaterDepth());
-         setCover(f.getCover());
+         setWindSpeed(f.getWindSpeed());
+         setWindDirection(f.getWindDirection());
+         setWindStrength(f.getWindStrength());
+         return;
+      }
+
+      Trip t = getActiveTrip();
+      if(null != t)
+      {
+         setWindSpeed(t.getWindSpeed());
+         setWindDirection(t.getWindDirection());
+         setWindStrength(t.getWindStrength());
+         return;
       }
    }
 
-   private Temperature getAirTempFromSensor()
+   private Temperature getMostRecentAirTemp()
    {
       // TODO: figure out how to get temp from phone sensor
 
-      // if no temp from sensor, try to use trip air temp
-      Trip t = TripManager.instance().getActiveTrip();
+      // if no temp from sensor, try to use last caught fish temp
+      // or trip air temp
+      Fish f = getLastCaughtFish();
+      if((null != f) && (null != f.getAirTemp()))
+         return f.getAirTemp();
+
+      Trip t = getActiveTrip();
       if(null != t)
          return t.getAirTemp();
       return null;
    }
 
-   private Temperature getCurrentTripWaterTemp()
+   private LatLon getLatLonFromSensor()
    {
-      Trip t = TripManager.instance().getActiveTrip();
+      // TODO:  figure out how to use the GPS sensor
+      return null;
+   }
+
+   private Trip getActiveTrip()
+   {
+      return getTripManager().getActiveTrip();
+   }
+
+   private Temperature getMostRecentWaterTemp()
+   {
+      // use either last caught fish temp or trip temp
+      Fish f = getLastCaughtFish();
+      if((null != f) && (null != f.getWaterTemp()))
+         return f.getWaterTemp();
+
+      Trip t = getActiveTrip();
       if(null != t)
          return t.getWaterTemp();
       return null;
    }
 
+   private Trip.Precipitation getMostRecentPrecipitation()
+   {
+      // use either last caught fish or trip data
+      Fish f = getLastCaughtFish();
+      if((null != f) && (null != f.getPrecipitation())
+           && (Trip.Precipitation.UNDEFINED != f.getPrecipitation()))
+      {
+         return f.getPrecipitation();
+      }
+
+      Trip t = getActiveTrip();
+      if((null != t) && (null != t.getPrecipitation())
+           && (Trip.Precipitation.UNDEFINED != t.getPrecipitation()))
+      {
+         return t.getPrecipitation();
+      }
+      return null;
+   }
+
    private Fish getLastCaughtFish()
    {
-      Trip t = TripManager.instance().getActiveTrip();
+      Trip t = getActiveTrip();
       if(null == t)
          return null;
       return t.getMostRecentCaughtFish();
