@@ -52,4 +52,7 @@
     <string name="fish_detail_cover_label">Cover:</string>
     <string name="fish_detail_lure_color_label">Color:</string>
     <string name="bluetooth_test_label">Bluetooth Test</string>
+    <string name="bluetooth_pairs_label">"Paired Devices: "</string>
+    <string name="bluetooth_scan_label">Scan</string>
+    <string name="bluetooth_cancel_scan_label">Cancel Scan</string>
 </resources>
