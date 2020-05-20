@@ -6,6 +6,7 @@
     <string name="trip_detail_label">Trip Detail</string>
     <string name="fish_list_label">Fish</string>
     <string name="fish_detail_label">Fish Detail</string>
+    <string name="bluetooth_testing_label">BT Test</string>
 
     <string name="new_trip">New Trip</string>
     <string name="end_trip">End Trip</string>
@@ -50,4 +51,5 @@
     <string name="fish_detail_gps_loc_label">GPS:</string>
     <string name="fish_detail_cover_label">Cover:</string>
     <string name="fish_detail_lure_color_label">Color:</string>
+    <string name="bluetooth_test_label">Bluetooth Test</string>
 </resources>
