@@ -1,7 +1,5 @@
 package org.weshley.fishtracker;
 
-import android.util.Log;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -14,7 +12,7 @@ public class PagerAdapter extends FragmentPagerAdapter
    static final Class[] FRAGMENT_LAYOUTS =
    {
       TripsFragment.class, TripDetailFragment.class, FishListFragment.class,
-      FishDetailFragment.class, BluetoothTestFragment.class
+      FishDetailFragment.class, RemoteControlConfigFragment.class
    };
 
    private String[] _fragmentLabelCache = null;

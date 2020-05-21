@@ -6,7 +6,7 @@
     <string name="trip_detail_label">Trip Detail</string>
     <string name="fish_list_label">Fish</string>
     <string name="fish_detail_label">Fish Detail</string>
-    <string name="bluetooth_testing_label">BT Test</string>
+    <string name="remote_control_config_label">Remote Control</string>
 
     <string name="new_trip">New Trip</string>
     <string name="end_trip">End Trip</string>
@@ -51,8 +51,10 @@
     <string name="fish_detail_gps_loc_label">GPS:</string>
     <string name="fish_detail_cover_label">Cover:</string>
     <string name="fish_detail_lure_color_label">Color:</string>
-    <string name="bluetooth_test_label">Bluetooth Test</string>
-    <string name="bluetooth_pairs_label">"Paired Devices: "</string>
-    <string name="bluetooth_scan_label">Scan</string>
-    <string name="bluetooth_cancel_scan_label">Cancel Scan</string>
+    <string name="remote_control_config_title">Remote Control Config</string>
+    <string name="remote_control_config_devices_label">"All Devices: "</string>
+    <string name="remote_control_config_scan_label">Scan</string>
+    <string name="remote_control_config_cancel_scan_label">Cancel Scan</string>
+    <string name="remote_control_config_connect_label">Connect</string>
+    <string name="remote_control_connected_device_label">Connected Device: </string>
 </resources>

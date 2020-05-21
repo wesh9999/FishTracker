@@ -8,6 +8,7 @@ public class UiManager
 
    private ViewPager _pager = null;
    private PagerAdapter _pagerAdapter = null;
+   private boolean _locationPermissionGranted = false;
 
    public static UiManager instance()
    {
@@ -23,5 +24,15 @@ public class UiManager
    public void showPage(Class fragmentClass)
    {
      _pager.setCurrentItem(_pagerAdapter.getFragmentIndex(fragmentClass));
+   }
+
+   public void setLocationPermissionGranted(boolean b)
+   {
+      _locationPermissionGranted = b;
+   }
+
+   public boolean isLocationPermissionGranted()
+   {
+      return _locationPermissionGranted;
    }
 }

@@ -23,20 +23,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class BluetoothTestFragment
+public class RemoteControlConfigFragment
    extends AbstractFragment
 {
-
    private ViewGroup _rootView = null;
    private BluetoothAdapter _btAdapter = null;
    private BroadcastReceiver _broadcastReceiver = null;
    private Map<String,String> _devices = null;
       // maps MAC addr to device name
    private boolean _scanning = false;
+   private Map<String,Integer> _devicesPositionMap = null;
 
    public static String getLabel()
    {
-      return MainActivity.getAppResources().getString(R.string.bluetooth_testing_label);
+      return MainActivity.getAppResources().getString(R.string.remote_control_config_label);
    }
 
    @Override
@@ -44,7 +44,7 @@ public class BluetoothTestFragment
                             Bundle savedInstanceState)
    {
       _rootView = (ViewGroup) inflater.inflate(
-         R.layout.bluetooth_test_fragment, container, false);
+         R.layout.remote_control_config_fragment, container, false);
 
       initBluetoothState();
       initUi();
@@ -119,17 +119,18 @@ public class BluetoothTestFragment
                // If it's already paired, skip it, because it's been listed already
                String deviceName = device.getName();
                String macAddress = device.getAddress();
-               if(device.getBondState() != BluetoothDevice.BOND_BONDED)
-                  _devices.put(macAddress, deviceName);
-               logMessage("Discovered device '" + deviceName + "'");
+               if((null != deviceName) && (device.getBondState() != BluetoothDevice.BOND_BONDED))
+                  addNewDevice(macAddress, deviceName);
             }
             else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
             {
-               logMessage("++++ Discovery started");
+               _scanning = true;
+               initScanControls();
             }
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
             {
-               logMessage("++++ Discovery finished");
+               _scanning = false;
+               initScanControls();
             }
          }
       };
@@ -181,11 +182,26 @@ public class BluetoothTestFragment
 
       List<String> pairedList = new ArrayList<>();
       pairedList.addAll(deviceNames);
+      _devicesPositionMap = new HashMap<String,Integer>();
+      for(int i = 0; i < pairedList.size(); ++i)
+         _devicesPositionMap.put(pairedList.get(i), i);
 
       Spinner spinner = getPairedDevicesList();
       ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
          this.getContext(), R.layout.spinner_item, pairedList);
       spinner.setAdapter(spinnerArrayAdapter);
+   }
+
+   private void addNewDevice(String macAddress, String deviceName)
+   {
+      if(!_devices.containsKey(macAddress))
+      {
+         _devices.put(macAddress, deviceName);
+         initPairedDevicesList();
+         Spinner spinner = getPairedDevicesList();
+         int pos = _devicesPositionMap.get(deviceName);
+         spinner.setSelection(pos);
+      }
    }
 
    private Map<String,String> getPairedDevices()
@@ -208,7 +224,7 @@ public class BluetoothTestFragment
 
    private void initScanControls()
    {
-      if(!hasBluetoothSupport())
+      if(!hasBluetoothSupport() || !UiManager.instance().isLocationPermissionGranted())
       {
          getScanButton().setEnabled(false);
          getScanLabel().setText("");
@@ -218,63 +234,57 @@ public class BluetoothTestFragment
       getScanButton().setEnabled(true);
       if(_scanning)
       {
-         getScanButton().setText(R.string.bluetooth_cancel_scan_label);
+         getScanButton().setText(R.string.remote_control_config_cancel_scan_label);
          getScanLabel().setText("Scanning...");
       }
       else
       {
-         getScanButton().setText(R.string.bluetooth_scan_label);
+         getScanButton().setText(R.string.remote_control_config_scan_label);
          getScanLabel().setText("");
       }
    }
 
    private void toggleScanning()
    {
-      if(!hasBluetoothSupport())
+      if(!hasBluetoothSupport() || !UiManager.instance().isLocationPermissionGranted())
          return;
 
       if(_scanning)
       {
          if(!_btAdapter.cancelDiscovery())
             logMessage("cancel discovery failed");
-         else
-            _scanning = false;
       }
       else
       {
-//         if(!_btAdapter.startDiscovery())
-//            logMessage("start discovery failed");
-//         else
-//            _scanning = true;
-         _btAdapter.cancelDiscovery();
-         _btAdapter.startDiscovery();
-         _scanning = true;
+//         _btAdapter.cancelDiscovery();
+         if(!_btAdapter.startDiscovery())
+            logMessage("start discovery failed");
       }
-      initScanControls();
+//      initScanControls();
    }
 
    private Button getScanButton()
    {
-      return (Button) _rootView.findViewById(R.id.bluetooth_scan_button);
+      return (Button) _rootView.findViewById(R.id.remote_control_config_scan_button);
    }
 
    private TextView getScanLabel()
    {
-      return (TextView) _rootView.findViewById(R.id.bluetooth_scan_label);
+      return (TextView) _rootView.findViewById(R.id.remote_control_config_bt_scan_label);
    }
 
    private TextView getBluetoothStatusText()
    {
-      return (TextView) _rootView.findViewById(R.id.bluetooth_status_message);
+      return (TextView) _rootView.findViewById(R.id.remote_control_config_bt_status_message);
    }
 
    private EditText getNotesField()
    {
-      return (EditText) _rootView.findViewById(R.id.bluetooth_notes_field);
+      return (EditText) _rootView.findViewById(R.id.remote_control_config_notes_field);
    }
 
    private Spinner getPairedDevicesList()
    {
-      return (Spinner) _rootView.findViewById(R.id.bluetooth_pairs_list);
+      return (Spinner) _rootView.findViewById(R.id.remote_control_config_devices_list);
    }
 }

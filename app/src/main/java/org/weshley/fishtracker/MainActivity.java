@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -20,7 +21,7 @@ public class MainActivity
    extends FragmentActivity
    implements TripListChangeListener
 {
-   private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+   private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
    private static Resources _resources = null;
    private static Context _context = null;
@@ -153,78 +154,77 @@ public class MainActivity
       return (Button) findViewById(R.id.fish_button);
    }
 
-   private boolean checkLocationPermission()
+   // this is required to get GPS positions and for bluetooth device discovery
+   private void checkLocationPermission()
    {
+      // tell the UI that we don't have location permission yet
+      UiManager.instance().setLocationPermissionGranted(false);
+
+      // do we already have location permission?
       if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED)
+            == PackageManager.PERMISSION_GRANTED)
       {
-         // Should we show an explanation?
-         if (ActivityCompat.shouldShowRequestPermissionRationale(
-               this, Manifest.permission.ACCESS_FINE_LOCATION))
-         {
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
-            new AlertDialog.Builder(this)
-                    .setTitle("Location Permission")
-                    .setMessage("Grant location permissions?")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
-                    {
-                       @Override
-                       public void onClick(DialogInterface dialogInterface, int i)
-                       {
-                          //Prompt the user once explanation has been shown
-                          ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    MY_PERMISSIONS_REQUEST_LOCATION);
-                       }
-                    })
-                    .create()
-                    .show();
-         }
-         else
-         {
-            // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions(
-             this,
-             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-             MY_PERMISSIONS_REQUEST_LOCATION);
-         }
-         return false;
-       }
+         UiManager.instance().setLocationPermissionGranted(true);
+         return;
+      }
+
+      // Does this device require that we prompt the user for permission?
+      if (ActivityCompat.shouldShowRequestPermissionRationale(
+            this, Manifest.permission.ACCESS_FINE_LOCATION))
+      {
+         // Present the user with a dialog they can use to grant permissions.  The
+         // requestPermissions() call will result in a callback to
+         // onRequestPermissionsResult().
+         new AlertDialog.Builder(this)
+              .setTitle("Permission Request")
+              .setMessage("This application needs permission to access location data.")
+              .setPositiveButton("OK", new DialogInterface.OnClickListener()
+              {
+                 @Override
+                 public void onClick(DialogInterface dialogInterface, int i)
+                 {
+                    ActivityCompat.requestPermissions(
+                       MainActivity.this,
+                       new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                       LOCATION_PERMISSION_REQUEST_CODE);
+                 }
+              })
+               .create()
+               .show();
+      }
       else
       {
-        return true;
+         // Request permission without prompting.  onRequestPermissionsResult() will
+         // be invoked if permission granted or denied
+         ActivityCompat.requestPermissions(
+          this,
+          new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+          LOCATION_PERMISSION_REQUEST_CODE);
       }
    }
 
    @Override
    public void onRequestPermissionsResult(
-      int requestCode, String permissions[], int[] grantResults)
+      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
    {
-      switch(requestCode)
+      if(requestCode == LOCATION_PERMISSION_REQUEST_CODE)
       {
-         case MY_PERMISSIONS_REQUEST_LOCATION:
+         // If request is cancelled, the result arrays are empty.
+         if((grantResults.length > 0)
+                 && (grantResults[0] == PackageManager.PERMISSION_GRANTED))
          {
-            // If request is cancelled, the result arrays are empty.
-            if((grantResults.length > 0)
-                    && (grantResults[0] == PackageManager.PERMISSION_GRANTED))
+            // permission should be granted, check again just to confirm then store the fact
+            // that we're allowed to access location data so the UI can be updated as
+            // appropriate
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                  == PackageManager.PERMISSION_GRANTED)
             {
-               // permission was granted, yay! Do the
-               // location-related task you need to do.
-               if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED)
-               {
-//                    //Request location updates:
-//                    locationManager.requestLocationUpdates(provider, 400, 1, this);
-               }
+               UiManager.instance().setLocationPermissionGranted(true);
             }
-            else
-            {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-            }
-            return;
+         }
+         else
+         {
+            UiManager.instance().setLocationPermissionGranted(false);
          }
       }
    }
